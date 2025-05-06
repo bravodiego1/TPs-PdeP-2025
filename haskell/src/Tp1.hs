@@ -4,13 +4,13 @@ import Text.Show.Functions()
 --Punto 1
 
 type Ruedas = Int
-type Chasis = Int
+type Chasis = Float
 
 data Auto = UnAuto {
     marca :: String,
     modelo :: String,
     desgaste :: (Ruedas, Chasis),
-    velocidadMaxima :: Int,
+    velocidadMaxima :: Float,
     tiempoDeCarrera :: Int,
     apodos :: [String]
 } deriving (Show, Eq)
@@ -138,3 +138,53 @@ No es un chiche.  verifica
 > esUnChiche' (UnAuto "Ferrari" "F50" (0,0) 65 130 ["La nave", "El fierro", "Ferrucho"])
 Es un chiche  verifica 
 -}
+
+-- Punto 3a)
+
+porcentaje :: Float -> Float -> Float
+porcentaje valor porciento = valor * porciento / 100
+
+sumaOrestaDePorcentaje :: String -> Float -> Float -> Float
+sumaOrestaDePorcentaje "RESTA" valor porciento = valor - (porcentaje valor) porciento
+sumaOrestaDePorcentaje "SUMA" valor porciento = valor + (porcentaje valor) porciento
+sumaOrestaDePorcentaje _ valor porciento = valor 
+
+repararAuto :: Auto -> Auto
+repararAuto auto = auto {desgaste = (0, sumaOrestaDePorcentaje "RESTA" ((snd.desgaste) auto) 85)} 
+
+{- 
+Casos de prueba:
+> repararAuto fiat 
+UnAuto {marca = "Fiat", modelo = "600", desgaste = (0, 4.950001), velocidadMaxima = 44.0, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
+> repararAuto ferrari 
+UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 0, apodos = ["La nave","El fierro","Ferrucho"]}
+-}
+
+-- Punto 3b)
+
+aplicarPenalidad :: Auto -> Int -> Auto
+aplicarPenalidad auto tiempoPenalizacion = auto {tiempoDeCarrera = tiempoDeCarrera auto + tiempoPenalizacion}
+
+{-
+Casos de prueba: 
+> aplicarPenalidad ferrari 20
+UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 30, apodos = ["La nave","El fierro","Ferrucho"]}
+> aplicarPenalidad ferrari 0 
+UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 10, apodos = ["La nave","El fierro","Ferrucho"]}
+-}
+
+-- Punto 3c)
+
+autoConNitro :: Auto -> Auto
+autoConNitro auto = auto {velocidadMaxima = sumaOrestaDePorcentaje "SUMA" (velocidadMaxima auto) 20}
+
+{- 
+Casos de prueba:
+> autoConNitro fiat
+UnAuto {marca = "Fiat", modelo = "600", desgaste = (27,33.0), velocidadMaxima = 52.8, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
+> autoConNitro fiat
+UnAuto {marca = "Fiat", modelo = "600", desgaste = (27,33.0), velocidadMaxima = 0.0, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
+-}
+
+
+
