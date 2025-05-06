@@ -64,17 +64,13 @@ peugeot = UnAuto {
     apodos = ["El rey del desierto"]
 } 
 
-{- Saber si un auto está en buen estado, lo que podemos determinar de la siguiente manera:
-Los Peugeot no están jamás en buen estado (basado en algún hecho real). 
-Si es de otra marca, 
-Si tiene una cantidad de segundos en carrera menor a 100, se determina en buen estado cuando el desgaste de chasis es menor a 20. 
-En caso contrario, cuando el desgaste del chasis es menor a 40 y el de las ruedas es menor a 60. -}
+-- Punto 2.a)
 
 estadoDeSaludDelAuto :: Auto -> String 
-estadoDeSaludDelAuto unAuto 
-  | ((=="Peugeot") . marca) unAuto = "No esta en buen estado"
-  | tiempoDeCarrera unAuto >= 100 && ((<40) . snd . desgaste) unAuto && ((<60) . fst . desgaste) unAuto = "Esta en buen estado"
-  | tiempoDeCarrera unAuto < 100 &&  ((<20) . snd . desgaste) unAuto = "Esta en buen estado"
+estadoDeSaludDelAuto (UnAuto marca _ (ruedas,chasis) _ tiempoDeCarrera _)
+  | (=="Peugeot") marca  = "No esta en buen estado"
+  | tiempoDeCarrera > 100 && chasis < 40 && ruedas < 60 = "Esta en buen estado"
+  | tiempoDeCarrera < 100 && chasis < 20 = "Esta en buen estado"
   | otherwise = "No esta en buen estado"
 
 {- 
@@ -90,4 +86,55 @@ estadoDeSaludDelAuto unAuto
 "No esta en buen estado"
 > estadoDeSaludDelAuto (UnAuto "Ferrari" "F50" (70,30) 65 150 ["La nave", "El fierro", "Ferrucho"])
 "No esta en buen estado"
+-}
+
+-- Punto 2.b)
+
+-- Usando pattern matching
+noDaMas :: Auto -> String
+noDaMas (UnAuto _ _ (ruedas,chasis) _ _ (apodo: _ ))
+  | comienzaCon "La" apodo && chasis > 80 = "No da mas"
+  | ruedas > 80 = "No da mas"
+  | otherwise = "Da para mas" 
+
+comienzaCon :: String -> String -> Bool
+comienzaCon unArticulo unApodo = ((==unArticulo) . take 2 ) unApodo
+
+{- > noDaMas' (UnAuto "Ferrari" "F50" (20,90) 65 130 ["La nave", "El fierro", "Ferrucho"])
+No da más. verifica
+
+> noDaMas' (UnAuto "Ferrari" "F50" (50,30) 0 20 ["La nave", "El fierro", "Ferrucho"])
+Da para más  verifica 
+
+> noDaMas' (UnAuto "Lamborghini" "Diablo" (90,20) 73 99 ["Lambo", "La bestia"])
+No da más.  verifica 
+
+> noDaMas' (UnAuto "Lamborghini" "Diablo" (0,0) 73 99 ["Lambo", "La bestia"])
+Da para más verifica -}
+
+
+-- Punto 2.c)
+
+-- con pattern matching
+esUnChiche :: Auto -> String
+esUnChiche (UnAuto _  _ (ruedas,chasis) _ _ unosApodos)
+  | chasis < 20 && esPar unosApodos = "Es un chiche"
+  | chasis < 50 && (not . esPar) unosApodos = "Es un chiche"
+  | otherwise = "No es un chiche"
+
+esPar :: [String] -> Bool
+esPar unosApodos = (even . length) unosApodos
+
+{- 
+> esUnChiche' (UnAuto "Lamborghini" "Diablo" (0,7) 73 99 ["Lambo", "La bestia"])
+Es un chiche verifica
+
+> esUnChiche' (UnAuto "Lamborghini" "Diablo" (90,20) 73 99 ["Lambo", "La bestia"])
+No es un chiche  no verifica
+
+> esUnChiche' (UnAuto "Ferrari" "F50" (20,90) 65 130 ["La nave", "El fierro", "Ferrucho"])
+No es un chiche.  verifica 
+
+> esUnChiche' (UnAuto "Ferrari" "F50" (0,0) 65 130 ["La nave", "El fierro", "Ferrucho"])
+Es un chiche  verifica 
 -}
