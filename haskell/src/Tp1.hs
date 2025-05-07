@@ -11,7 +11,7 @@ data Auto = UnAuto {
     modelo :: String,
     desgaste :: (Ruedas, Chasis),
     velocidadMaxima :: Float,
-    tiempoDeCarrera :: Int,
+    tiempoDeCarrera :: Float,
     apodos :: [String]
 } deriving (Show, Eq)
 
@@ -162,7 +162,7 @@ UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0.0), velocidadMaxima =
 
 -- Punto 3b)
 
-aplicarPenalidad :: Auto -> Int -> Auto
+aplicarPenalidad :: Auto -> Float -> Auto
 aplicarPenalidad auto tiempoPenalizacion = auto {tiempoDeCarrera = tiempoDeCarrera auto + tiempoPenalizacion}
 
 {-
@@ -186,5 +186,63 @@ UnAuto {marca = "Fiat", modelo = "600", desgaste = (27,33.0), velocidadMaxima = 
 UnAuto {marca = "Fiat", modelo = "600", desgaste = (27,33.0), velocidadMaxima = 0.0, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
 -}
 
+-- Punto 3d) 
+bautizarUnAuto:: String -> Auto -> Auto
+bautizarUnAuto unApodo unAuto = unAuto {apodos = apodos unAuto ++ [unApodo]} 
 
+{- 
+Casos de prueba: 
+> bautizarUnAuto "El diablo" lamborghini
+UnAuto {marca = "Lamborghini", modelo = "Diablo", desgaste = (4,7.0), velocidadMaxima = 73.0, tiempoDeCarrera = 0, apodos = ["Lambo","La bestia","El diablo"]}
+> bautizarUnAuto "El diablo" lamborghini
+UnAuto {marca = "Lamborghini", modelo = "Diablo", desgaste = (4,7.0), velocidadMaxima = 73.0, tiempoDeCarrera = 0, apodos = ["El diablo"]}
+-}
 
+-- Punto 3e)
+llevarUnAutoAUnDesarmadero :: Auto -> String -> String -> Auto
+llevarUnAutoAUnDesarmadero unAuto nuevaMarca nuevoModelo = unAuto {marca = nuevaMarca, modelo = nuevoModelo, apodos = ["Nunca Taxi"]}
+
+{- 
+Casos de prueba: 
+> llevarUnAutoAUnDesarmadero fiat "Tesla" "X"
+UnAuto {marca = "Tesla", modelo = "X", desgaste = (27,33.0), velocidadMaxima = 44.0, tiempoDeCarrera = 0, apodos = ["Nunca Taxi"]}
+-}
+
+-- Punto 4a)
+transitarUnaCurva :: String -> Auto -> Auto
+transitarUnaCurva "Peligrosa" unAuto = curvaPeligrosa unAuto
+transitarUnaCurva "Tranca" unAuto = curvaTranca unAuto
+
+curvaPeligrosa :: Auto -> Auto
+curvaPeligrosa unAuto = aplicarCurva 60 300 unAuto
+
+curvaTranca :: Auto -> Auto
+curvaTranca unAuto = aplicarCurva 110 550 unAuto 
+
+aplicarCurva :: Int -> Int -> Auto -> Auto
+aplicarCurva angulo longitud unAuto = actualizarDesgaste angulo longitud . actualizarTiempo longitud $ unAuto
+
+actualizarDesgaste :: Int -> Int -> Auto -> Auto
+actualizarDesgaste unAngulo unaLongitud unAuto = unAuto {desgaste = (fst (desgaste unAuto) + calcularDesgaste unAngulo unaLongitud, snd (desgaste unAuto))}
+
+calcularDesgaste :: Int -> Int -> Int
+calcularDesgaste angulo longitud = floor (3 * fromIntegral longitud / fromIntegral angulo)
+
+actualizarTiempo :: Int -> Auto -> Auto
+actualizarTiempo unaLongitud unAuto = unAuto {tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado unaLongitud (velocidadMaxima unAuto)}
+
+calcularTiempoAgregado :: Int -> Float -> Float
+calcularTiempoAgregado longitud velocidadMax = fromIntegral longitud / (velocidadMax / 2)
+
+{- 
+Casos de prueba: 
+> transitarUnaCurva "Peligrosa" ferrari
+UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (15,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 9.230769, 
+apodos = ["La nave","El fierro","Ferrucho"]}
+> transitarUnaCurva "Peligrosa" peugeot
+UnAuto {marca = "Peugeot", modelo = "504", desgaste = (15,0.0), velocidadMaxima = 40.0, tiempoDeCarrera = 15.0, apodos = ["El rey del desierto"]}
+> transitarUnaCurva "Tranca" ferrari
+UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (15,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 16.923077, apodos = ["La nave","El fierro","Ferrucho"]}
+> transitarUnaCurva "Tranca" peugeot
+UnAuto {marca = "Peugeot", modelo = "504", desgaste = (15,0.0), velocidadMaxima = 40.0, tiempoDeCarrera = 27.5, apodos = ["El rey del desierto"]}
+-}
