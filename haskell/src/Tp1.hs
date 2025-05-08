@@ -179,6 +179,24 @@ capacidadSuperCalifragilisticaespialidosa ferrari
 > 7
 -}
 
+--Punto 2g)
+{-
+Calcular qué tan riesgoso es un auto. Esto es igual a la velocidad máxima por un 
+décimo del desgaste en las ruedas. 
+Si el auto no está en buen estado, es el doble.
+-}
+
+chasis :: Auto -> Float
+chasis unAuto = (snd . desgaste) unAuto
+
+ruedas :: Auto -> Float
+ruedas unAuto = (fst . desgaste) unAuto
+
+riesgoDeUnAuto :: Auto -> Float
+riesgoDeUnAuto unAuto
+  |estadoDeSaludDelAuto unAuto == "No esta en buen estado" = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
+  |otherwise = ruedas unAuto * (velocidadMaxima unAuto) * 0.1 
+
 -- Punto 3a)
 
 porcentaje :: Float -> Float -> Float
