@@ -197,6 +197,14 @@ riesgoDeUnAuto unAuto
   |estadoDeSaludDelAuto unAuto == "No esta en buen estado" = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
   |otherwise = ruedas unAuto * (velocidadMaxima unAuto) * 0.1 
 
+{-
+Casos de Prueba
+riesgoDeUnAuto lamborghini
+> 29.2
+riesgoDeUnAuto Fiat
+237.6
+-}
+
 -- Punto 3a)
 
 porcentaje :: Float -> Float -> Float
