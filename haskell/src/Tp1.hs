@@ -208,46 +208,6 @@ Casos de prueba:
 UnAuto {marca = "Tesla", modelo = "X", desgaste = (27,33.0), velocidadMaxima = 44.0, tiempoDeCarrera = 0, apodos = ["Nunca Taxi"]}
 -}
 
-{-
--- Punto 4a)
-transitarUnaCurva :: String -> Auto -> Auto
-transitarUnaCurva "Peligrosa" unAuto = curvaPeligrosa unAuto
-transitarUnaCurva "Tranca" unAuto = curvaTranca unAuto
-
-curvaPeligrosa :: Auto -> Auto
-curvaPeligrosa unAuto = aplicarCurva 60 300 unAuto
-
-curvaTranca :: Auto -> Auto
-curvaTranca unAuto = aplicarCurva 110 550 unAuto 
-
-aplicarCurva :: Int -> Int -> Auto -> Auto
-aplicarCurva angulo longitud unAuto = actualizarDesgaste angulo longitud . actualizarTiempo longitud $ unAuto
-
-actualizarDesgaste :: Int -> Int -> Auto -> Auto
-actualizarDesgaste unAngulo unaLongitud unAuto = unAuto {desgaste = (fst (desgaste unAuto) + calcularDesgaste unAngulo unaLongitud, snd (desgaste unAuto))}
-
-calcularDesgaste :: Int -> Int -> Int
-calcularDesgaste angulo longitud = floor (3 * fromIntegral longitud / fromIntegral angulo)
-
-actualizarTiempo :: Int -> Auto -> Auto
-actualizarTiempo unaLongitud unAuto = unAuto {tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado unaLongitud (velocidadMaxima unAuto)}
-
-calcularTiempoAgregado :: Int -> Float -> Float
-calcularTiempoAgregado longitud velocidadMax = fromIntegral longitud / (velocidadMax / 2)
-
-{- 
-Casos de prueba: 
-> transitarUnaCurva "Peligrosa" ferrari
-UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (15,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 9.230769, 
-apodos = ["La nave","El fierro","Ferrucho"]}
-> transitarUnaCurva "Peligrosa" peugeot
-UnAuto {marca = "Peugeot", modelo = "504", desgaste = (15,0.0), velocidadMaxima = 40.0, tiempoDeCarrera = 15.0, apodos = ["El rey del desierto"]}
-> transitarUnaCurva "Tranca" ferrari
-UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (15,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 16.923077, apodos = ["La nave","El fierro","Ferrucho"]}
-> transitarUnaCurva "Tranca" peugeot
-UnAuto {marca = "Peugeot", modelo = "504", desgaste = (15,0.0), velocidadMaxima = 40.0, tiempoDeCarrera = 27.5, apodos = ["El rey del desierto"]}
--}
--}
 --Punto 4
 transitarUnTramo :: String -> Auto -> Auto
 transitarUnTramo "CurvaPeligrosa" unAuto = curvaPeligrosa unAuto
@@ -343,4 +303,28 @@ calcularDesgaste numero1 numero2 numero3 =  numero1 * numero2 / numero3
 
 calcularTiempoAgregado :: Fractional a => a -> a -> a -> a -> a
 calcularTiempoAgregado numero1 numero2 numero3 numero4 = numero1 * numero2 / ( numero3 / numero4 )
+
+--Punto 5b
+paraEntendidos :: [Auto] -> String
+paraEntendidos autos
+  | all tienenBuenEstadoDeSalud autos && all (tiempoDeCarreraMenorA200) autos = "El grupo es para entendidos"
+  | otherwise = "El grupo no es para entendidos"
+
+tienenBuenEstadoDeSalud :: Auto -> Bool
+tienenBuenEstadoDeSalud unAuto = ((== "Esta en buen estado").estadoDeSaludDelAuto) unAuto 
+
+tiempoDeCarreraMenorA200 :: Auto -> Bool
+tiempoDeCarreraMenorA200 unAuto = (<=200) (tiempoDeCarrera unAuto)
+
+{-
+CASOS DE PRUEBA 5b:
+> paraEntendidos [(UnAuto "Ferrari" "F50" (0,0) 65 200 ["La nave", "El fierro", "Ferrucho"]),(UnAuto "Ferrari" "F50" (0,0) 65 201 ["La nave", "El fierro", "Ferrucho"])]
+"El grupo no es para entendidos"
+
+> paraEntendidos [(UnAuto "Ferrari" "F50" (0,0) 65 200 ["La nave", "El fierro", "Ferrucho"]), peugeot]
+"El grupo no es para entendidos"
+
+> paraEntendidos [(UnAuto "Ferrari" "F50" (0,0) 65 200 ["La nave", "El fierro", "Ferrucho"]),(UnAuto "Lamborghini" "Diablo" (4,7) 73 200 ["Lambo", "La bestia"])]
+"El grupo es para entendidos"
+-}
 
