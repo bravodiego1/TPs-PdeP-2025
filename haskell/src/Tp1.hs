@@ -139,6 +139,28 @@ No es un chiche.  verifica
 Es un chiche  verifica 
 -}
 
+--punto 2d)
+
+{-
+Saber si un auto es una joya, condicion dada por no tener ni desgaste, ni mas de un apodo.
+CASO 1: SI AUTO ES PEUGEOT -> 0 desgaste y 1 apodo
+CASO 2: SI AUTO ES FERRARI -> NO tiene desgaste y tiene un apodo.
+-}
+
+esUnaJoya :: Auto -> String
+esUnaJoya unAuto 
+    |desgaste unAuto == (0,0) && (length.apodos) unAuto <= 1 = "Es una joya"
+    |otherwise = "No es una joya"
+
+{-
+CASOS DE PRUEBA:
+esUnaJoya Peugeot
+  > "Es una Joya"
+esUnaJoya Ferrari
+  > "No es una joya"
+-}
+
+
 -- Punto 3a)
 
 porcentaje :: Float -> Float -> Float
