@@ -141,12 +141,6 @@ Es un chiche  verifica
 
 --punto 2d)
 
-{-
-Saber si un auto es una joya, condicion dada por no tener ni desgaste, ni mas de un apodo.
-CASO 1: SI AUTO ES PEUGEOT -> 0 desgaste y 1 apodo
-CASO 2: SI AUTO ES FERRARI -> NO tiene desgaste y tiene un apodo.
--}
-
 esUnaJoya :: Auto -> String
 esUnaJoya unAuto 
     |desgaste unAuto == (0,0) && (length.apodos) unAuto <= 1 = "Es una joya"
@@ -154,12 +148,36 @@ esUnaJoya unAuto
 
 {-
 CASOS DE PRUEBA:
-esUnaJoya Peugeot
+esUnaJoya peugeot
   > "Es una Joya"
-esUnaJoya Ferrari
+esUnaJoya ferrari
   > "No es una joya"
 -}
 
+--punto 2e)
+
+nivelDeChetez :: Auto -> Int
+nivelDeChetez unAuto = (length.apodos) unAuto * (length.modelo) unAuto * 20
+
+{-
+CASOS DE PRUEBA:
+nivelDeChetez ferrari
+> 180
+-}
+
+--Punto 2f)
+
+capacidadSuperCalifragilisticaespialidosa :: Auto -> Int
+capacidadSuperCalifragilisticaespialidosa unAuto = (length.recibirPrimerApodo) unAuto
+
+recibirPrimerApodo :: Auto -> String
+recibirPrimerApodo unAuto = (head.apodos) unAuto
+
+{-
+Caso de Prueba:
+capacidadSuperCalifragilisticaespialidosa ferrari
+> 7
+-}
 
 -- Punto 3a)
 
