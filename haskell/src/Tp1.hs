@@ -67,13 +67,13 @@ peugeot = UnAuto {
 -- Punto 2.a)
 
 estadoDeSaludDelAuto :: Auto -> String 
-estadoDeSaludDelAuto (UnAuto marca _ (ruedas,chasis) _ tiempoDeCarrera _)
-  | (=="Peugeot") marca  = "No esta en buen estado"
-  | tiempoDeCarrera > 100 && chasis < 40 && ruedas < 60 = "Esta en buen estado"
-  | tiempoDeCarrera < 100 && chasis < 20 = "Esta en buen estado"
+estadoDeSaludDelAuto unAuto
+  | (=="Peugeot") (marca unAuto)  = "No esta en buen estado"
+  | tiempoDeCarrera unAuto < 100 && chasis unAuto < 20 = "Esta en buen estado"
+  | tiempoDeCarrera unAuto >= 100 && chasis unAuto < 40 && ruedas unAuto < 60 = "Esta en buen estado"
   | otherwise = "No esta en buen estado"
 
-{- 
+{- CASOS DE PRUEBA: 
 > estadoDeSaludDelAuto (UnAuto "Peugeot" "504" (0,0) 40 0 ["El rey del desierto"])
 "No esta en buen estado."
 > estadoDeSaludDelAuto (UnAuto "Lamborghini" "Diablo" (0,7) 73 99 ["Lambo", "La bestia"])
@@ -90,57 +90,48 @@ estadoDeSaludDelAuto (UnAuto marca _ (ruedas,chasis) _ tiempoDeCarrera _)
 
 -- Punto 2.b)
 
--- Usando pattern matching
 noDaMas :: Auto -> String
-noDaMas (UnAuto _ _ (ruedas,chasis) _ _ (apodo: _ ))
-  | comienzaCon "La" apodo && chasis > 80 = "No da mas"
-  | ruedas > 80 = "No da mas"
+noDaMas unAuto
+  | comienzaCon "La" (apodos unAuto) && chasis unAuto > 80 = "No da mas"
+  | ruedas unAuto > 80 = "No da mas"
   | otherwise = "Da para mas" 
 
-comienzaCon :: String -> String -> Bool
-comienzaCon unArticulo unApodo = ((==unArticulo) . take 2 ) unApodo
+comienzaCon :: String -> [String] -> Bool
+comienzaCon unArticulo apodos = ((==unArticulo) . take 2 . head) apodos
 
-{- > noDaMas' (UnAuto "Ferrari" "F50" (20,90) 65 130 ["La nave", "El fierro", "Ferrucho"])
+{- CASOS DE PRUEBA:
+> noDaMas (UnAuto "Ferrari" "F50" (20,90) 65 130 ["La nave", "El fierro", "Ferrucho"])
 No da más. verifica
-
-> noDaMas' (UnAuto "Ferrari" "F50" (50,30) 0 20 ["La nave", "El fierro", "Ferrucho"])
+> noDaMas (UnAuto "Ferrari" "F50" (50,30) 0 20 ["La nave", "El fierro", "Ferrucho"])
 Da para más  verifica 
-
-> noDaMas' (UnAuto "Lamborghini" "Diablo" (90,20) 73 99 ["Lambo", "La bestia"])
+> noDaMas (UnAuto "Lamborghini" "Diablo" (90,20) 73 99 ["Lambo", "La bestia"])
 No da más.  verifica 
-
-> noDaMas' (UnAuto "Lamborghini" "Diablo" (0,0) 73 99 ["Lambo", "La bestia"])
+> noDaMas (UnAuto "Lamborghini" "Diablo" (0,0) 73 99 ["Lambo", "La bestia"])
 Da para más verifica -}
-
 
 -- Punto 2.c)
 
--- con pattern matching
 esUnChiche :: Auto -> String
-esUnChiche (UnAuto _  _ (ruedas,chasis) _ _ unosApodos)
-  | chasis < 20 && esPar unosApodos = "Es un chiche"
-  | chasis < 50 && (not . esPar) unosApodos = "Es un chiche"
+esUnChiche unAuto
+  | chasis unAuto < 20 && esPar (apodos unAuto) = "Es un chiche"
+  | chasis unAuto < 50 && (not . esPar) (apodos unAuto) = "Es un chiche"
   | otherwise = "No es un chiche"
 
 esPar :: [String] -> Bool
 esPar unosApodos = (even . length) unosApodos
 
-{- 
-> esUnChiche' (UnAuto "Lamborghini" "Diablo" (0,7) 73 99 ["Lambo", "La bestia"])
+{- CASOS DE PRUEBA:
+> esUnChiche (UnAuto "Lamborghini" "Diablo" (0,7) 73 99 ["Lambo", "La bestia"])
 Es un chiche verifica
-
-> esUnChiche' (UnAuto "Lamborghini" "Diablo" (90,20) 73 99 ["Lambo", "La bestia"])
-No es un chiche  no verifica
-
-> esUnChiche' (UnAuto "Ferrari" "F50" (20,90) 65 130 ["La nave", "El fierro", "Ferrucho"])
+> esUnChiche (UnAuto "Lamborghini" "Diablo" (90,20) 73 99 ["Lambo", "La bestia"])
+No es un chiche verifica
+> esUnChiche (UnAuto "Ferrari" "F50" (20,90) 65 130 ["La nave", "El fierro", "Ferrucho"])
 No es un chiche.  verifica 
-
-> esUnChiche' (UnAuto "Ferrari" "F50" (0,0) 65 130 ["La nave", "El fierro", "Ferrucho"])
+> esUnChiche (UnAuto "Ferrari" "F50" (0,0) 65 130 ["La nave", "El fierro", "Ferrucho"])
 Es un chiche  verifica 
 -}
 
---punto 2d)
-
+-- punto 2d)
 esUnaJoya :: Auto -> String
 esUnaJoya unAuto 
     |desgaste unAuto == (0,0) && (length.apodos) unAuto <= 1 = "Es una joya"
@@ -369,6 +360,21 @@ calcularDesgaste numero1 numero2 numero3 =  numero1 * numero2 / numero3
 
 calcularTiempoAgregado :: Fractional a => a -> a -> a -> a -> a
 calcularTiempoAgregado numero1 numero2 numero3 numero4 = numero1 * numero2 / ( numero3 / numero4 )
+
+-- Punto 5.a)
+
+nivelDeJoyez :: [Auto] -> Int
+nivelDeJoyez unosAutos = (sum . map unidadesDeJoyez) unosAutos
+
+unidadesDeJoyez :: Auto -> Int
+unidadesDeJoyez unAuto 
+  | ((=="Es una joya") . esUnaJoya) unAuto && tiempoDeCarrera unAuto < 50 = 1
+  | ((=="Es una joya") . esUnaJoya) unAuto && tiempoDeCarrera unAuto >= 50 = 2
+  | otherwise = 0
+
+{- CASOS DE PRUEBA:  
+> nivelDeJoyez  [UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 50, apodos = ["El rey del desierto"]}, UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 40, tiempoDeCarrera = 49, apodos = ["El rey del desierto"]}, UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 0, apodos = ["La nave", "El fierro", "Ferrucho"]}]
+3 verifica -}
 
 --Punto 5b
 paraEntendidos :: [Auto] -> String
