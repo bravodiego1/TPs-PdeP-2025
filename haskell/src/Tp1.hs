@@ -64,9 +64,15 @@ peugeot = UnAuto {
     apodos = ["El rey del desierto"]
 } 
 
+chasis :: Auto -> Float
+chasis unAuto = (snd . desgaste) unAuto
+
+ruedas :: Auto -> Float
+ruedas unAuto = (fst . desgaste) unAuto
+
 -- Punto 2.a)
 
-estadoDeSaludDelAuto :: Auto -> String 
+estadoDeSaludDelAuto :: Auto -> String -- devuelve el estado de salud de un auto dependiendo de su tiempo de carrera y su chasis.
 estadoDeSaludDelAuto unAuto
   | (=="Peugeot") (marca unAuto)  = "No esta en buen estado"
   | tiempoDeCarrera unAuto < 100 && chasis unAuto < 20 = "Esta en buen estado"
@@ -90,7 +96,7 @@ estadoDeSaludDelAuto unAuto
 
 -- Punto 2.b)
 
-noDaMas :: Auto -> String
+noDaMas :: Auto -> String -- dependiendo de su apodo, su chasis y sus ruedas, aclara si da o no da para mas.
 noDaMas unAuto
   | comienzaCon "La" (apodos unAuto) && chasis unAuto > 80 = "No da mas"
   | ruedas unAuto > 80 = "No da mas"
@@ -111,7 +117,7 @@ Da para más verifica -}
 
 -- Punto 2.c)
 
-esUnChiche :: Auto -> String
+esUnChiche :: Auto -> String --dependiendo su chasis y su apodo, analiza si es un chiche o no.
 esUnChiche unAuto
   | chasis unAuto < 20 && esPar (apodos unAuto) = "Es un chiche"
   | chasis unAuto < 50 && (not . esPar) (apodos unAuto) = "Es un chiche"
@@ -132,7 +138,7 @@ Es un chiche  verifica
 -}
 
 -- punto 2d)
-esUnaJoya :: Auto -> String
+esUnaJoya :: Auto -> String -- dependiendo su desgaste y la cantidad de apodos, analiza si es una joya o no.
 esUnaJoya unAuto 
     |desgaste unAuto == (0,0) && (length.apodos) unAuto <= 1 = "Es una joya"
     |otherwise = "No es una joya"
@@ -147,7 +153,7 @@ esUnaJoya ferrari
 
 --punto 2e)
 
-nivelDeChetez :: Auto -> Int
+nivelDeChetez :: Auto -> Int --devuelve el nivel de chetez de un auto, dependiendo de sus apodos y su modelo
 nivelDeChetez unAuto = (length.apodos) unAuto * (length.modelo) unAuto * 20
 
 {-
@@ -158,7 +164,7 @@ nivelDeChetez ferrari
 
 --Punto 2f)
 
-capacidadSuperCalifragilisticaespialidosa :: Auto -> Int
+capacidadSuperCalifragilisticaespialidosa :: Auto -> Int --dependiendo su primer apodo, cuenta la cantidad de letras.
 capacidadSuperCalifragilisticaespialidosa unAuto = (length.recibirPrimerApodo) unAuto
 
 recibirPrimerApodo :: Auto -> String
@@ -172,18 +178,9 @@ capacidadSuperCalifragilisticaespialidosa ferrari
 
 --Punto 2g)
 {-
-Calcular qué tan riesgoso es un auto. Esto es igual a la velocidad máxima por un 
-décimo del desgaste en las ruedas. 
-Si el auto no está en buen estado, es el doble.
 -}
 
-chasis :: Auto -> Float
-chasis unAuto = (snd . desgaste) unAuto
-
-ruedas :: Auto -> Float
-ruedas unAuto = (fst . desgaste) unAuto
-
-riesgoDeUnAuto :: Auto -> Float
+riesgoDeUnAuto :: Auto -> Float --analiza el riesgo de un auto.
 riesgoDeUnAuto unAuto
   |estadoDeSaludDelAuto unAuto == "No esta en buen estado" = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
   |otherwise = ruedas unAuto * (velocidadMaxima unAuto) * 0.1 
@@ -206,7 +203,7 @@ sumaOrestaDePorcentaje "RESTA" valor porciento = valor - (porcentaje valor) porc
 sumaOrestaDePorcentaje "SUMA" valor porciento = valor + (porcentaje valor) porciento
 sumaOrestaDePorcentaje _ valor porciento = valor 
 
-repararAuto :: Auto -> Auto
+repararAuto :: Auto -> Auto -- Reparar el auto deja en 0 el desgaste y reduce un 85% el chasis.
 repararAuto auto = auto {desgaste = (0, sumaOrestaDePorcentaje "RESTA" ((snd.desgaste) auto) 85)} 
 
 {- 
@@ -219,7 +216,7 @@ UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0.0), velocidadMaxima =
 
 -- Punto 3b)
 
-aplicarPenalidad :: Auto -> Float -> Auto
+aplicarPenalidad :: Auto -> Float -> Auto -- aplica penalidad a un auto, incrementando un tiempo de penalizacion al tiempo de carrera.
 aplicarPenalidad auto tiempoPenalizacion = auto {tiempoDeCarrera = tiempoDeCarrera auto + tiempoPenalizacion}
 
 {-
@@ -232,7 +229,7 @@ UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0.0), velocidadMaxima =
 
 -- Punto 3c)
 
-autoConNitro :: Auto -> Auto
+autoConNitro :: Auto -> Auto --aumenta un 20% su velocidad maxima.
 autoConNitro auto = auto {velocidadMaxima = sumaOrestaDePorcentaje "SUMA" (velocidadMaxima auto) 20}
 
 {- 
@@ -244,7 +241,7 @@ UnAuto {marca = "Fiat", modelo = "600", desgaste = (27,33.0), velocidadMaxima = 
 -}
 
 -- Punto 3d) 
-bautizarUnAuto:: String -> Auto -> Auto
+bautizarUnAuto:: String -> Auto -> Auto --agrega apodo al auto.
 bautizarUnAuto unApodo unAuto = unAuto {apodos = apodos unAuto ++ [unApodo]} 
 
 {- 
@@ -256,7 +253,7 @@ UnAuto {marca = "Lamborghini", modelo = "Diablo", desgaste = (4,7.0), velocidadM
 -}
 
 -- Punto 3e)
-llevarUnAutoAUnDesarmadero :: Auto -> String -> String -> Auto
+llevarUnAutoAUnDesarmadero :: Auto -> String -> String -> Auto -- cambia su marca y modelo.
 llevarUnAutoAUnDesarmadero unAuto nuevaMarca nuevoModelo = unAuto {marca = nuevaMarca, modelo = nuevoModelo, apodos = ["Nunca Taxi"]}
 
 {- 
@@ -363,7 +360,7 @@ calcularTiempoAgregado numero1 numero2 numero3 numero4 = numero1 * numero2 / ( n
 
 -- Punto 5.a)
 
-nivelDeJoyez :: [Auto] -> Int
+nivelDeJoyez :: [Auto] -> Int -- devuelve su nivel de joya.
 nivelDeJoyez unosAutos = (sum . map unidadesDeJoyez) unosAutos
 
 unidadesDeJoyez :: Auto -> Int
