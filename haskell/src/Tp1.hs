@@ -266,7 +266,8 @@ UnAuto {marca = "Tesla", modelo = "X", desgaste = (27,33.0), velocidadMaxima = 4
 -}
 
 --Punto 4
-transitarUnTramo :: String -> Auto -> Auto
+
+transitarUnTramo :: String -> Auto -> Auto --REALIZO DISTINTOS TRAMOS.
 transitarUnTramo "CurvaPeligrosa" unAuto = curvaPeligrosa unAuto
 transitarUnTramo "CurvaTranca" unAuto = curvaTranca unAuto
 
