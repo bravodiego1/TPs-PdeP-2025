@@ -74,7 +74,7 @@ ruedas unAuto = (fst . desgaste) unAuto
 
 estadoDeSaludDelAuto :: Auto -> String -- devuelve el estado de salud de un auto dependiendo de su tiempo de carrera y su chasis.
 estadoDeSaludDelAuto unAuto
-  | (=="Peugeot") (marca unAuto)  = "No esta en buen estado"
+  | ((=="Peugeot"). marca) unAuto  = "No esta en buen estado"
   | tiempoDeCarrera unAuto < 100 && chasis unAuto < 20 = "Esta en buen estado"
   | tiempoDeCarrera unAuto >= 100 && chasis unAuto < 40 && ruedas unAuto < 60 = "Esta en buen estado"
   | otherwise = "No esta en buen estado"
@@ -98,7 +98,7 @@ estadoDeSaludDelAuto unAuto
 
 noDaMas :: Auto -> String -- dependiendo de su apodo, su chasis y sus ruedas, aclara si da o no da para mas.
 noDaMas unAuto
-  | comienzaCon "La" (apodos unAuto) && chasis unAuto > 80 = "No da mas"
+  | (comienzaCon "La" . apodos) unAuto && chasis unAuto > 80 = "No da mas"
   | ruedas unAuto > 80 = "No da mas"
   | otherwise = "Da para mas" 
 
@@ -119,8 +119,8 @@ Da para más verifica -}
 
 esUnChiche :: Auto -> String --dependiendo su chasis y su apodo, analiza si es un chiche o no.
 esUnChiche unAuto
-  | chasis unAuto < 20 && esPar (apodos unAuto) = "Es un chiche"
-  | chasis unAuto < 50 && (not . esPar) (apodos unAuto) = "Es un chiche"
+  | chasis unAuto < 20 && (esPar . apodos) unAuto = "Es un chiche"
+  | chasis unAuto < 50 && (not . esPar . apodos) unAuto = "Es un chiche"
   | otherwise = "No es un chiche"
 
 esPar :: [String] -> Bool
