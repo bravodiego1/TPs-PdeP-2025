@@ -74,10 +74,13 @@ ruedas unAuto = (fst . desgaste) unAuto
 
 estadoDeSaludDelAuto :: Auto -> String -- devuelve el estado de salud de un auto dependiendo de su tiempo de carrera y su chasis.
 estadoDeSaludDelAuto unAuto
-  | ((=="Peugeot"). marca) unAuto  = "No esta en buen estado"
+  | esPeugeot unAuto = "No esta en buen estado"
   | tiempoDeCarrera unAuto < 100 && chasis unAuto < 20 = "Esta en buen estado"
   | tiempoDeCarrera unAuto >= 100 && chasis unAuto < 40 && ruedas unAuto < 60 = "Esta en buen estado"
   | otherwise = "No esta en buen estado"
+
+esPeugeot :: Auto -> Bool
+esPeugeot unAuto = ((=="Peugeot"). marca) unAuto
 
 {- CASOS DE PRUEBA: 
 > estadoDeSaludDelAuto (UnAuto "Peugeot" "504" (0,0) 40 0 ["El rey del desierto"])
@@ -365,9 +368,12 @@ nivelDeJoyez unosAutos = (sum . map unidadesDeJoyez) unosAutos
 
 unidadesDeJoyez :: Auto -> Int
 unidadesDeJoyez unAuto 
-  | ((=="Es una joya") . esUnaJoya) unAuto && tiempoDeCarrera unAuto < 50 = 1
-  | ((=="Es una joya") . esUnaJoya) unAuto && tiempoDeCarrera unAuto >= 50 = 2
+  | determinarUnidadesDeJoyezDe unAuto && tiempoDeCarrera unAuto < 50 = 1
+  | determinarUnidadesDeJoyezDe unAuto && tiempoDeCarrera unAuto >= 50 = 2
   | otherwise = 0
+
+determinarUnidadesDeJoyezDe :: Auto -> Bool
+determinarUnidadesDeJoyezDe unAuto = ((=="Es una joya") . esUnaJoya) unAuto
 
 {- CASOS DE PRUEBA:  
 > nivelDeJoyez  [UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 50, apodos = ["El rey del desierto"]}, UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 40, tiempoDeCarrera = 49, apodos = ["El rey del desierto"]}, UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 0, apodos = ["La nave", "El fierro", "Ferrucho"]}]
@@ -396,4 +402,3 @@ CASOS DE PRUEBA 5b:
 > paraEntendidos [(UnAuto "Ferrari" "F50" (0,0) 65 200 ["La nave", "El fierro", "Ferrucho"]),(UnAuto "Lamborghini" "Diablo" (4,7) 73 200 ["Lambo", "La bestia"])]
 "El grupo es para entendidos"
 -}
-
