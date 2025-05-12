@@ -204,7 +204,7 @@ sumaOrestaDePorcentaje "SUMA" valor porciento = valor + (porcentaje valor) porci
 sumaOrestaDePorcentaje _ valor porciento = valor 
 
 repararAuto :: Auto -> Auto -- Reparar el auto deja en 0 el desgaste y reduce un 85% el chasis.
-repararAuto auto = auto {desgaste = (0, sumaOrestaDePorcentaje "RESTA" ((snd.desgaste) auto) 85)} 
+repararAuto auto = auto {desgaste = (0, sumaOrestaDePorcentaje "RESTA" (chasis auto) 85)} 
 
 {- 
 Casos de prueba:
