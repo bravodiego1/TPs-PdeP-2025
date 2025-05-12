@@ -51,7 +51,7 @@ fiat = UnAuto {
     desgaste = (27, 33),
     velocidadMaxima = 44,
     tiempoDeCarrera = 0 ,
-    apodos = ["La Bocha", "La Bolita", "Fitito"]
+    apodos = ["La Bocha", "La bolita", "Fitito"]
 }
 
 peugeot :: Auto
@@ -72,7 +72,7 @@ ruedas unAuto = (fst . desgaste) unAuto
 
 -- Punto 2.a)
 
-estadoDeSaludDelAuto :: Auto -> String -- devuelve el estado de salud de un auto dependiendo de su tiempo de carrera y su chasis.
+estadoDeSaludDelAuto :: Auto -> String -- devuelve el estado de salud de un auto dependiendo de su tiempo de carrera y su desgaste.
 estadoDeSaludDelAuto unAuto
   | esPeugeot unAuto = "No esta en buen estado"
   | tiempoDeCarrera unAuto < 100 && chasis unAuto < 20 = "Esta en buen estado"
@@ -180,9 +180,6 @@ capacidadSuperCalifragilisticaespialidosa ferrari
 -}
 
 --Punto 2g)
-{-
--}
-
 riesgoDeUnAuto :: Auto -> Float --analiza el riesgo de un auto.
 riesgoDeUnAuto unAuto
   |estadoDeSaludDelAuto unAuto == "No esta en buen estado" = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
@@ -345,16 +342,16 @@ UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (39.0,0.0), velocidadMaxim
 
 
 tramoCurva :: Float -> Float -> Auto -> Auto
-tramoCurva unAngulo unaLongitud unAuto = unAuto {desgaste = (fst (desgaste unAuto) + calcularDesgaste (fromIntegral (3)) unaLongitud unAngulo, snd(desgaste unAuto)), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (2))}
+tramoCurva unAngulo unaLongitud unAuto = unAuto {desgaste = (ruedas unAuto + calcularDesgaste (fromIntegral (3)) unaLongitud unAngulo, chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (2))}
 
 tramoRecto :: Float -> Auto -> Auto
-tramoRecto unaLongitud unAuto = unAuto {desgaste = (fst (desgaste unAuto), snd(desgaste unAuto) + calcularDesgaste unaLongitud (fromIntegral (1)) (fromIntegral (100))), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (1))}
+tramoRecto unaLongitud unAuto = unAuto {desgaste = (ruedas unAuto, chasis unAuto + calcularDesgaste unaLongitud (fromIntegral (1)) (fromIntegral (100))), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (1))}
 
 tramoZigzag :: Float -> Auto -> Auto
-tramoZigzag cambiosDeDireccion unAuto = unAuto {desgaste = (fst (desgaste unAuto) + calcularDesgaste (velocidadMaxima unAuto) cambiosDeDireccion (fromIntegral (10)), 5), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado cambiosDeDireccion (fromIntegral (3)) (fromIntegral (1)) (fromIntegral (1))}
+tramoZigzag cambiosDeDireccion unAuto = unAuto {desgaste = (ruedas unAuto + calcularDesgaste (velocidadMaxima unAuto) cambiosDeDireccion (fromIntegral (10)), 5), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado cambiosDeDireccion (fromIntegral (3)) (fromIntegral (1)) (fromIntegral (1))}
 
 tramoRuloEnElAire :: Float -> Auto -> Auto
-tramoRuloEnElAire diametroDelRulo unAuto = unAuto {desgaste = (fst (desgaste unAuto) + calcularDesgaste diametroDelRulo 1.5 (fromIntegral (1)), snd(desgaste unAuto)), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (5)) diametroDelRulo (velocidadMaxima unAuto) (fromIntegral (1))}
+tramoRuloEnElAire diametroDelRulo unAuto = unAuto {desgaste = (ruedas unAuto + calcularDesgaste diametroDelRulo 1.5 (fromIntegral (1)), chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (5)) diametroDelRulo (velocidadMaxima unAuto) (fromIntegral (1))}
 
 calcularDesgaste :: Fractional a => a -> a -> a -> a
 calcularDesgaste numero1 numero2 numero3 =  numero1 * numero2 / numero3
@@ -390,7 +387,7 @@ tienenBuenEstadoDeSalud :: Auto -> Bool
 tienenBuenEstadoDeSalud unAuto = ((== "Esta en buen estado").estadoDeSaludDelAuto) unAuto 
 
 tiempoDeCarreraMenorA200 :: Auto -> Bool
-tiempoDeCarreraMenorA200 unAuto = (<=200) (tiempoDeCarrera unAuto)
+tiempoDeCarreraMenorA200 unAuto = ((<=200).tiempoDeCarrera) unAuto
 
 {-
 CASOS DE PRUEBA 5b:
