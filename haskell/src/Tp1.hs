@@ -72,41 +72,37 @@ ruedas unAuto = (fst . desgaste) unAuto
 
 -- Punto 2.a)
 
-estadoDeSaludDelAuto :: Auto -> String -- devuelve el estado de salud de un auto dependiendo de su tiempo de carrera y su desgaste.
-estadoDeSaludDelAuto unAuto
-  | esPeugeot unAuto = "No esta en buen estado"
-  | tiempoDeCarrera unAuto < 100 && chasis unAuto < 20 = "Esta en buen estado"
-  | tiempoDeCarrera unAuto >= 100 && chasis unAuto < 40 && ruedas unAuto < 60 = "Esta en buen estado"
-  | otherwise = "No esta en buen estado"
+estaEnBuenEstadoUnAuto :: Auto -> Bool
+estaEnBuenEstadoUnAuto unAuto = ((/="Peugeot") . marca) unAuto && ((tiempoDeCarrera unAuto >= 100 && chasis unAuto < 40 && ruedas unAuto < 60) || (tiempoDeCarrera unAuto < 100 && chasis unAuto < 20))
 
 esPeugeot :: Auto -> Bool
 esPeugeot unAuto = ((=="Peugeot"). marca) unAuto
 
 {- CASOS DE PRUEBA: 
-> estadoDeSaludDelAuto (UnAuto "Peugeot" "504" (0,0) 40 0 ["El rey del desierto"])
+> estaEnBuenEstadoUnAuto (UnAuto "Peugeot" "504" (0,0) 40 0 ["El rey del desierto"])
 "No esta en buen estado."
-> estadoDeSaludDelAuto (UnAuto "Lamborghini" "Diablo" (0,7) 73 99 ["Lambo", "La bestia"])
+> estaEnBuenEstadoUnAuto (UnAuto "Lamborghini" "Diablo" (0,7) 73 99 ["Lambo", "La bestia"])
 "Esta en buen estado"
-> estadoDeSaludDelAuto (UnAuto "Fiat" "600" (0,33) 44 99 ["La Bocha", "La Bolita", "Fitito"])
+> estaEnBuenEstadoUnAuto (UnAuto "Fiat" "600" (0,33) 44 99 ["La Bocha", "La Bolita", "Fitito"])
 "No esta en buen estado"
-> estadoDeSaludDelAuto (UnAuto "Ferrari" "F50" (50,30) 65 130 ["La nave", "El fierro", "Ferrucho"])
+> estaEnBuenEstadoUnAuto (UnAuto "Ferrari" "F50" (50,30) 65 130 ["La nave", "El fierro", "Ferrucho"])
 "Esta en buen estado"
-> estadoDeSaludDelAuto (UnAuto "Ferrari" "F50" (50, 45) 65 15 ["La nave", "El fierro", "Ferrucho"])
+> estaEnBuenEstadoUnAuto (UnAuto "Ferrari" "F50" (50, 45) 65 15 ["La nave", "El fierro", "Ferrucho"])
 "No esta en buen estado"
-> estadoDeSaludDelAuto (UnAuto "Ferrari" "F50" (70,30) 65 150 ["La nave", "El fierro", "Ferrucho"])
+> estaEnBuenEstadoUnAuto (UnAuto "Ferrari" "F50" (70,30) 65 150 ["La nave", "El fierro", "Ferrucho"])
 "No esta en buen estado"
 -}
 
 -- Punto 2.b)
 
-noDaMas :: Auto -> String -- dependiendo de su apodo, su chasis y sus ruedas, aclara si da o no da para mas.
-noDaMas unAuto
-  | (comienzaCon "La" . apodos) unAuto && chasis unAuto > 80 = "No da mas"
-  | ruedas unAuto > 80 = "No da mas"
-  | otherwise = "Da para mas" 
+noDaMas :: Auto -> Bool
+noDaMas unAuto = (comienzaCon "La" (primerApodoDe unAuto) && chasis unAuto > 80 ) || ruedas unAuto > 80
 
-comienzaCon :: String -> [String] -> Bool
-comienzaCon unArticulo apodos = ((==unArticulo) . take 2 . head) apodos
+comienzaCon :: String -> String -> Bool
+comienzaCon unArticulo unaPalabra = ((==unArticulo) . take (length unArticulo)) unaPalabra
+
+primerApodoDe :: Auto -> String
+primerApodoDe unAuto = (head . apodos) unAuto
 
 {- CASOS DE PRUEBA:
 > noDaMas (UnAuto "Ferrari" "F50" (20,90) 65 130 ["La nave", "El fierro", "Ferrucho"])
@@ -120,14 +116,11 @@ Da para más verifica -}
 
 -- Punto 2.c)
 
-esUnChiche :: Auto -> String --dependiendo su chasis y su apodo, analiza si es un chiche o no.
-esUnChiche unAuto
-  | chasis unAuto < 20 && (esPar . apodos) unAuto = "Es un chiche"
-  | chasis unAuto < 50 && (not . esPar . apodos) unAuto = "Es un chiche"
-  | otherwise = "No es un chiche"
+esUnChiche :: Auto -> Bool
+esUnChiche unAuto = (chasis unAuto < 20 && (esParElPrimerApodoDe . apodos) unAuto) || (chasis unAuto < 50 && (not. esParElPrimerApodoDe . apodos) unAuto)
 
-esPar :: [String] -> Bool
-esPar unosApodos = (even . length) unosApodos
+esParElPrimerApodoDe :: [String] -> Bool
+esParElPrimerApodoDe unosApodos = (even . length) unosApodos
 
 {- CASOS DE PRUEBA:
 > esUnChiche (UnAuto "Lamborghini" "Diablo" (0,7) 73 99 ["Lambo", "La bestia"])
@@ -182,7 +175,7 @@ capacidadSuperCalifragilisticaespialidosa ferrari
 --Punto 2g)
 riesgoDeUnAuto :: Auto -> Float --analiza el riesgo de un auto.
 riesgoDeUnAuto unAuto
-  |estadoDeSaludDelAuto unAuto == "No esta en buen estado" = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
+  |estaEnBuenEstadoUnAuto unAuto = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
   |otherwise = ruedas unAuto * (velocidadMaxima unAuto) * 0.1 
 
 {-
@@ -360,18 +353,16 @@ calcularTiempoAgregado :: Fractional a => a -> a -> a -> a -> a
 calcularTiempoAgregado numero1 numero2 numero3 numero4 = numero1 * numero2 / ( numero3 / numero4 )
 
 -- Punto 5.a)
-
+{- 
 nivelDeJoyez :: [Auto] -> Int -- devuelve su nivel de joya.
 nivelDeJoyez unosAutos = (sum . map unidadesDeJoyez) unosAutos
 
 unidadesDeJoyez :: Auto -> Int
 unidadesDeJoyez unAuto 
-  | determinarUnidadesDeJoyezDe unAuto && tiempoDeCarrera unAuto < 50 = 1
-  | determinarUnidadesDeJoyezDe unAuto && tiempoDeCarrera unAuto >= 50 = 2
+  | esUnaJoya unAuto && tiempoDeCarrera unAuto < 50 = 1
+  | esUnaJoya unAuto && tiempoDeCarrera unAuto >= 50 = 2
   | otherwise = 0
-
-determinarUnidadesDeJoyezDe :: Auto -> Bool
-determinarUnidadesDeJoyezDe unAuto = ((=="Es una joya") . esUnaJoya) unAuto
+-}
 
 {- CASOS DE PRUEBA:  
 > nivelDeJoyez  [UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 50, apodos = ["El rey del desierto"]}, UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 40, tiempoDeCarrera = 49, apodos = ["El rey del desierto"]}, UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 0, apodos = ["La nave", "El fierro", "Ferrucho"]}]
@@ -380,11 +371,8 @@ determinarUnidadesDeJoyezDe unAuto = ((=="Es una joya") . esUnaJoya) unAuto
 --Punto 5b
 paraEntendidos :: [Auto] -> String
 paraEntendidos autos
-  | all tienenBuenEstadoDeSalud autos && all (tiempoDeCarreraMenorA200) autos = "El grupo es para entendidos"
+  | all estaEnBuenEstadoUnAuto autos && all (tiempoDeCarreraMenorA200) autos = "El grupo es para entendidos"
   | otherwise = "El grupo no es para entendidos"
-
-tienenBuenEstadoDeSalud :: Auto -> Bool
-tienenBuenEstadoDeSalud unAuto = ((== "Esta en buen estado").estadoDeSaludDelAuto) unAuto 
 
 tiempoDeCarreraMenorA200 :: Auto -> Bool
 tiempoDeCarreraMenorA200 unAuto = ((<=200).tiempoDeCarrera) unAuto
