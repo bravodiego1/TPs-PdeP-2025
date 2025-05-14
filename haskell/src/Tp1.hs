@@ -235,7 +235,7 @@ UnAuto {marca = "Fiat", modelo = "600", desgaste = (27,33.0), velocidadMaxima = 
 
 -- Punto 3d) 
 bautizarUnAuto:: String -> Auto -> Auto --agrega apodo al auto.
-bautizarUnAuto unApodo unAuto = unAuto {apodos = apodos unAuto ++ [unApodo]} 
+bautizarUnAuto nuevoApodo unAuto = unAuto {apodos = nuevoApodo : apodos unAuto} 
 
 {- 
 Casos de prueba: 
