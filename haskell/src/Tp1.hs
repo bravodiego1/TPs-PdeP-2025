@@ -75,8 +75,6 @@ ruedas unAuto = (fst . desgaste) unAuto
 estaEnBuenEstadoUnAuto :: Auto -> Bool
 estaEnBuenEstadoUnAuto unAuto = ((/="Peugeot") . marca) unAuto && ((tiempoDeCarrera unAuto >= 100 && chasis unAuto < 40 && ruedas unAuto < 60) || (tiempoDeCarrera unAuto < 100 && chasis unAuto < 20))
 
-esPeugeot :: Auto -> Bool
-esPeugeot unAuto = ((=="Peugeot"). marca) unAuto
 
 {- CASOS DE PRUEBA: 
 > estaEnBuenEstadoUnAuto (UnAuto "Peugeot" "504" (0,0) 40 0 ["El rey del desierto"])
@@ -100,7 +98,6 @@ noDaMas unAuto = (comienzaCon "La" (primerApodoDe unAuto) && chasis unAuto > 80 
 
 comienzaCon :: String -> String -> Bool
 comienzaCon unArticulo unaPalabra = ((==unArticulo) . take (length unArticulo)) unaPalabra
-
 primerApodoDe :: Auto -> String
 primerApodoDe unAuto = (head . apodos) unAuto
 
@@ -134,17 +131,15 @@ Es un chiche  verifica
 -}
 
 -- punto 2d)
-esUnaJoya :: Auto -> String -- dependiendo su desgaste y la cantidad de apodos, analiza si es una joya o no.
-esUnaJoya unAuto 
-    |desgaste unAuto == (0,0) && (length.apodos) unAuto <= 1 = "Es una joya"
-    |otherwise = "No es una joya"
+esUnaJoya :: Auto -> Bool -- dependiendo su desgaste y la cantidad de apodos, analiza si es una joya o no.
+esUnaJoya unAuto = desgaste unAuto == (0,0) && (length.apodos) unAuto <= 1 
 
 {-
 CASOS DE PRUEBA:
 esUnaJoya peugeot
-  > "Es una Joya"
+  > "True"
 esUnaJoya ferrari
-  > "No es una joya"
+  > "False"
 -}
 
 --punto 2e)
@@ -161,10 +156,7 @@ nivelDeChetez ferrari
 --Punto 2f)
 
 capacidadSuperCalifragilisticaespialidosa :: Auto -> Int --dependiendo su primer apodo, cuenta la cantidad de letras.
-capacidadSuperCalifragilisticaespialidosa unAuto = (length.recibirPrimerApodo) unAuto
-
-recibirPrimerApodo :: Auto -> String
-recibirPrimerApodo unAuto = (head.apodos) unAuto
+capacidadSuperCalifragilisticaespialidosa unAuto = (length.primerApodoDe) unAuto
 
 {-
 Caso de Prueba:
@@ -172,10 +164,11 @@ capacidadSuperCalifragilisticaespialidosa ferrari
 > 7
 -}
 
+
 --Punto 2g)
 riesgoDeUnAuto :: Auto -> Float --analiza el riesgo de un auto.
 riesgoDeUnAuto unAuto
-  |estaEnBuenEstadoUnAuto unAuto = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
+  |(not.estaEnBuenEstadoUnAuto) unAuto  = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
   |otherwise = ruedas unAuto * (velocidadMaxima unAuto) * 0.1 
 
 {-
