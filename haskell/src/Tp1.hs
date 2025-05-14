@@ -188,23 +188,15 @@ riesgoDeUnAuto Fiat
 
 -- Punto 3a)
 
-porcentaje :: Float -> Float -> Float
-porcentaje valor porciento = valor * porciento / 100
-
-sumaOrestaDePorcentaje :: String -> Float -> Float -> Float
-sumaOrestaDePorcentaje "RESTA" valor porciento = valor - (porcentaje valor) porciento
-sumaOrestaDePorcentaje "SUMA" valor porciento = valor + (porcentaje valor) porciento
-sumaOrestaDePorcentaje _ valor porciento = valor 
-
 repararAuto :: Auto -> Auto -- Reparar el auto deja en 0 el desgaste y reduce un 85% el chasis.
-repararAuto auto = auto {desgaste = (0, sumaOrestaDePorcentaje "RESTA" (chasis auto) 85)} 
+repararAuto auto = auto {desgaste = (0, (*0.15).chasis $ auto)} 
 
 {- 
 Casos de prueba:
 > repararAuto fiat 
-UnAuto {marca = "Fiat", modelo = "600", desgaste = (0, 4.950001), velocidadMaxima = 44.0, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
+UnAuto {marca = "Fiat", modelo = "600", desgaste = (0.0, 4.9500003), velocidadMaxima = 44.0, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
 > repararAuto ferrari 
-UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 0, apodos = ["La nave","El fierro","Ferrucho"]}
+UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0.0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 0, apodos = ["La nave","El fierro","Ferrucho"]}
 -}
 
 -- Punto 3b)
@@ -215,22 +207,22 @@ aplicarPenalidad auto tiempoPenalizacion = auto {tiempoDeCarrera = tiempoDeCarre
 {-
 Casos de prueba: 
 > aplicarPenalidad ferrari 20
-UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 30, apodos = ["La nave","El fierro","Ferrucho"]}
+UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0.0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 30.0, apodos = ["La nave","El fierro","Ferrucho"]}
 > aplicarPenalidad ferrari 0 
-UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 10, apodos = ["La nave","El fierro","Ferrucho"]}
+UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0.0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 10.0, apodos = ["La nave","El fierro","Ferrucho"]}
 -}
 
 -- Punto 3c)
 
 autoConNitro :: Auto -> Auto --aumenta un 20% su velocidad maxima.
-autoConNitro auto = auto {velocidadMaxima = sumaOrestaDePorcentaje "SUMA" (velocidadMaxima auto) 20}
+autoConNitro auto = auto {velocidadMaxima = (*1.2).velocidadMaxima $ auto}
 
 {- 
 Casos de prueba:
 > autoConNitro fiat
-UnAuto {marca = "Fiat", modelo = "600", desgaste = (27,33.0), velocidadMaxima = 52.8, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
+UnAuto {marca = "Fiat", modelo = "600", desgaste = (27.0,33.0), velocidadMaxima = 52.800003, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
 > autoConNitro fiat
-UnAuto {marca = "Fiat", modelo = "600", desgaste = (27,33.0), velocidadMaxima = 0.0, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
+UnAuto {marca = "Fiat", modelo = "600", desgaste = (27.0,33.0), velocidadMaxima = 0.0, tiempoDeCarrera = 0, apodos = ["La Bocha","La Bolita","Fitito"]}
 -}
 
 -- Punto 3d) 
