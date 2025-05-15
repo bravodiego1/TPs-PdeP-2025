@@ -367,10 +367,13 @@ unidadesDeJoyez unAuto
 3 verifica -}
 
 --Punto 5b
-paraEntendidos :: [Auto] -> String
+paraEntendidos :: [Auto] -> Bool
+paraEntendidos autos = all estaEnBuenEstadoUnAuto autos && all (tiempoDeCarreraMenorA200) autos
+{- 
 paraEntendidos autos
   | all estaEnBuenEstadoUnAuto autos && all (tiempoDeCarreraMenorA200) autos = "El grupo es para entendidos"
   | otherwise = "El grupo no es para entendidos"
+-}
 
 tiempoDeCarreraMenorA200 :: Auto -> Bool
 tiempoDeCarreraMenorA200 unAuto = ((<=200).tiempoDeCarrera) unAuto
@@ -378,11 +381,11 @@ tiempoDeCarreraMenorA200 unAuto = ((<=200).tiempoDeCarrera) unAuto
 {-
 CASOS DE PRUEBA 5b:
 > paraEntendidos [(UnAuto "Ferrari" "F50" (0,0) 65 200 ["La nave", "El fierro", "Ferrucho"]),(UnAuto "Ferrari" "F50" (0,0) 65 201 ["La nave", "El fierro", "Ferrucho"])]
-"El grupo no es para entendidos"
+False
 
 > paraEntendidos [(UnAuto "Ferrari" "F50" (0,0) 65 200 ["La nave", "El fierro", "Ferrucho"]), peugeot]
-"El grupo no es para entendidos"
+False
 
 > paraEntendidos [(UnAuto "Ferrari" "F50" (0,0) 65 200 ["La nave", "El fierro", "Ferrucho"]),(UnAuto "Lamborghini" "Diablo" (4,7) 73 200 ["Lambo", "La bestia"])]
-"El grupo es para entendidos"
+True
 -}
