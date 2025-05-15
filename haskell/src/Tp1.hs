@@ -246,9 +246,9 @@ transitar :: Tramo -> Auto -> Auto
 transitar unTramo unAuto = unTramo unAuto
 
 curvaPeligrosa :: Tramo
-curvaPeligrosa unAuto = tramoCurva 60.0 300.0 unAuto
+curvaPeligrosa unAuto = tramoCurva 60 300 unAuto
 curvaTranca :: Tramo
-curvaTranca unAuto = tramoCurva 110.0 550.0 unAuto
+curvaTranca unAuto = tramoCurva 110 550 unAuto
 {-
 CASO DE PRUEBAS 4a:
 >  transitar curvaPeligrosa ferrari
@@ -266,9 +266,9 @@ UnAuto {marca = "Peugeot", modelo = "504", desgaste = (15.0,0.0), velocidadMaxim
 
 
 tramoRectoClassic :: Tramo
-tramoRectoClassic unAuto = tramoRecto 715.0 unAuto
+tramoRectoClassic unAuto = tramoRecto 715 unAuto
 tramito :: Tramo
-tramito unAuto = tramoRecto 260.0 unAuto
+tramito unAuto = tramoRecto 260 unAuto
 {-
 CASOS DE PRUEBA 4b:
 > transitar tramoRectoClassic ferrari
@@ -280,9 +280,9 @@ UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0.0,2.6), velocidadMaxima
 
 
 zigZagLoco :: Tramo
-zigZagLoco unAuto = tramoZigzag 5.0 unAuto
+zigZagLoco unAuto = tramoZigzag 5 unAuto
 casiCurva :: Tramo
-casiCurva unAuto = tramoZigzag 1.0 unAuto
+casiCurva unAuto = tramoZigzag 1 unAuto
 {-
 CASOS DE PRUEBA 4c:
 > transitar zigZagLoco ferrari
@@ -294,9 +294,9 @@ UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (6.5,5.0), velocidadMaxima
 
 
 ruloClasico :: Tramo
-ruloClasico unAuto = tramoRuloEnElAire 13.0 unAuto
+ruloClasico unAuto = tramoRuloEnElAire 13 unAuto
 deseoDeMuerte :: Tramo
-deseoDeMuerte unAuto = tramoRuloEnElAire 26.0 unAuto
+deseoDeMuerte unAuto = tramoRuloEnElAire 26 unAuto
 {-
 CASOS DE PRUEBA 4d:
 >  transitar ruloClasico ferrari
@@ -308,20 +308,21 @@ UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (39.0,0.0), velocidadMaxim
 
 
 tramoCurva :: Float -> Float -> Tramo
-tramoCurva unAngulo unaLongitud unAuto = (sumarDesgasteRuedas 3.0 unaLongitud unAngulo . sumarTiempoDeCarrera 1.0 unaLongitud (velocidadMaxima unAuto) 2.0) unAuto
+tramoCurva unAngulo unaLongitud unAuto = (sumarDesgasteRuedas 3 unaLongitud unAngulo . sumarTiempoDeCarrera 1 unaLongitud (velocidadMaxima unAuto) 2) unAuto
 --unAuto {desgaste = (ruedas unAuto + calcularDesgaste (fromIntegral (3)) unaLongitud unAngulo, chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (2))}
 
 tramoRecto :: Float -> Tramo
-tramoRecto unaLongitud unAuto = (actualizarDesgasteChasis (+ calcularDesgaste unaLongitud 1.0 100.0) . sumarTiempoDeCarrera 1.0 unaLongitud (velocidadMaxima unAuto) 1.0) unAuto
+tramoRecto unaLongitud unAuto = (actualizarDesgasteChasis (+ calcularDesgaste unaLongitud 1 100) . sumarTiempoDeCarrera 1 unaLongitud (velocidadMaxima unAuto) 1) unAuto
 --unAuto {desgaste = (ruedas unAuto, chasis unAuto + calcularDesgaste unaLongitud (fromIntegral (1)) (fromIntegral (100))), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (1))}
 
 tramoZigzag :: Float -> Tramo
-tramoZigzag cambiosDeDireccion unAuto = (sumarDesgasteRuedas cambiosDeDireccion (velocidadMaxima unAuto) 10.0 . degasteDeChasisIgual5 . sumarTiempoDeCarrera cambiosDeDireccion 3.0 1.0 1.0) unAuto
+tramoZigzag cambiosDeDireccion unAuto = (sumarDesgasteRuedas cambiosDeDireccion (velocidadMaxima unAuto) 10 . degasteDeChasisIgual5 . sumarTiempoDeCarrera cambiosDeDireccion 3 1 1) unAuto
 --unAuto {desgaste = (ruedas unAuto + calcularDesgaste (velocidadMaxima unAuto) cambiosDeDireccion (fromIntegral (10)), 5), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado cambiosDeDireccion (fromIntegral (3)) (fromIntegral (1)) (fromIntegral (1))}
 
 tramoRuloEnElAire :: Float -> Tramo
-tramoRuloEnElAire diametroDelRulo unAuto = (sumarDesgasteRuedas diametroDelRulo 1.5 1.0 . sumarTiempoDeCarrera 5.0 diametroDelRulo (velocidadMaxima unAuto) 1.0) unAuto
+tramoRuloEnElAire diametroDelRulo unAuto = (sumarDesgasteRuedas diametroDelRulo 1.5 1 . sumarTiempoDeCarrera 5 diametroDelRulo (velocidadMaxima unAuto) 1) unAuto
 --unAuto {desgaste = (ruedas unAuto + calcularDesgaste diametroDelRulo 1.5 (fromIntegral (1)), chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (5)) diametroDelRulo (velocidadMaxima unAuto) (fromIntegral (1))} 
+
 
 
 actualizarDesgasteRuedas :: (Float -> Float) -> Auto -> Auto
