@@ -241,101 +241,114 @@ UnAuto {marca = "Tesla", modelo = "X", desgaste = (27,33.0), velocidadMaxima = 4
 -}
 
 --Punto 4
+type Tramo = Auto -> Auto
+transitar :: Tramo -> Auto -> Auto
+transitar unTramo unAuto = unTramo unAuto
 
-transitarUnTramo :: String -> Auto -> Auto --REALIZO DISTINTOS TRAMOS.
-transitarUnTramo "CurvaPeligrosa" unAuto = curvaPeligrosa unAuto
-transitarUnTramo "CurvaTranca" unAuto = curvaTranca unAuto
-
-transitarUnTramo "TramoRectoClassic" unAuto = tramoRectoClassic unAuto
-transitarUnTramo "Tramito" unAuto = tramito unAuto 
-
-transitarUnTramo "ZigZagLoco" unAuto = zigZagLoco unAuto 
-transitarUnTramo "casiCurva" unAuto = casiCurva unAuto
-
-transitarUnTramo "RuloClasico" unAuto = ruloClasico unAuto
-transitarUnTramo "deseoDeMuerte" unAuto = deseoDeMuerte unAuto
-
-transitarUnTramo _ unAuto = unAuto
-
-curvaPeligrosa :: Auto -> Auto
-curvaPeligrosa unAuto = tramoCurva (fromIntegral (60)) (fromIntegral(300)) unAuto
-curvaTranca :: Auto -> Auto
-curvaTranca unAuto = tramoCurva (fromIntegral (110)) (fromIntegral (550)) unAuto
+curvaPeligrosa :: Tramo
+curvaPeligrosa unAuto = tramoCurva 60.0 300.0 unAuto
+curvaTranca :: Tramo
+curvaTranca unAuto = tramoCurva 110.0 550.0 unAuto
 {-
 CASO DE PRUEBAS 4a:
-> transitarUnTramo "CurvaPeligrosa" ferrari
+>  transitar curvaPeligrosa ferrari
 UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (15.0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 9.230769, apodos = ["La nave","El fierro","Ferrucho"]}
 
-> transitarUnTramo "CurvaPeligrosa" peugeot
-UnAuto {marca = "Peugeot", modelo = "504", desgaste = (15.0,0.0), velocidadMaxima = 40.0, tiempoDeCarrera = 15.0, apodos = ["El rey del desierto"]}   
+> transitar curvaPeligrosa peugeot 
+UnAuto {marca = "Peugeot", modelo = "504", desgaste = (15.0,0.0), velocidadMaxima = 40.0, tiempoDeCarrera = 15.0, apodos = ["El rey del desierto"]}
 
-> transitarUnTramo "CurvaTranca" ferrari
+> transitar curvaTranca ferrari
 UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (15.0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 16.923077, apodos = ["La nave","El fierro","Ferrucho"]}
 
-> transitarUnTramo "CurvaTranca" peugeot
+> transitar curvaTranca peugeot 
 UnAuto {marca = "Peugeot", modelo = "504", desgaste = (15.0,0.0), velocidadMaxima = 40.0, tiempoDeCarrera = 27.5, apodos = ["El rey del desierto"]}
 -}
 
 
-tramoRectoClassic :: Auto -> Auto
-tramoRectoClassic unAuto = tramoRecto (fromIntegral (715)) unAuto
-tramito :: Auto -> Auto
-tramito unAuto = tramoRecto (fromIntegral (260)) unAuto
+tramoRectoClassic :: Tramo
+tramoRectoClassic unAuto = tramoRecto 715.0 unAuto
+tramito :: Tramo
+tramito unAuto = tramoRecto 260.0 unAuto
 {-
 CASOS DE PRUEBA 4b:
-> transitarUnTramo "TramoRectoClassic" ferrari
+> transitar tramoRectoClassic ferrari
 UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0.0,7.15), velocidadMaxima = 65.0, tiempoDeCarrera = 11.0, apodos = ["La nave","El fierro","Ferrucho"]}
 
-> transitarUnTramo "Tramito" ferrari
+> transitar tramito ferrari
 UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0.0,2.6), velocidadMaxima = 65.0, tiempoDeCarrera = 4.0, apodos = ["La nave","El fierro","Ferrucho"]}
 -}
 
 
-zigZagLoco :: Auto -> Auto
-zigZagLoco unAuto = tramoZigzag (fromIntegral (5)) unAuto
-casiCurva :: Auto -> Auto
-casiCurva unAuto = tramoZigzag (fromIntegral (1)) unAuto
+zigZagLoco :: Tramo
+zigZagLoco unAuto = tramoZigzag 5.0 unAuto
+casiCurva :: Tramo
+casiCurva unAuto = tramoZigzag 1.0 unAuto
 {-
 CASOS DE PRUEBA 4c:
-> transitarUnTramo "ZigZagLoco" ferrari
+> transitar zigZagLoco ferrari
 UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (32.5,5.0), velocidadMaxima = 65.0, tiempoDeCarrera = 15.0, apodos = ["La nave","El fierro","Ferrucho"]}
 
-> transitarUnTramo "casiCurva" ferrari
+> transitar casiCurva ferrari
 UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (6.5,5.0), velocidadMaxima = 65.0, tiempoDeCarrera = 3.0, apodos = ["La nave","El fierro","Ferrucho"]}
 -}
 
 
-ruloClasico :: Auto -> Auto
-ruloClasico unAuto = tramoRuloEnElAire (fromIntegral (13)) unAuto
-deseoDeMuerte :: Auto -> Auto
-deseoDeMuerte unAuto = tramoRuloEnElAire (fromIntegral (26)) unAuto
+ruloClasico :: Tramo
+ruloClasico unAuto = tramoRuloEnElAire 13.0 unAuto
+deseoDeMuerte :: Tramo
+deseoDeMuerte unAuto = tramoRuloEnElAire 26.0 unAuto
 {-
 CASOS DE PRUEBA 4d:
-> transitarUnTramo "RuloClasico" ferrari
+>  transitar ruloClasico ferrari
 UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (19.5,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 1.0, apodos = ["La nave","El fierro","Ferrucho"]}
 
-> transitarUnTramo "deseoDeMuerte" ferrari
+> transitar deseoDeMuerte ferrari
 UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (39.0,0.0), velocidadMaxima = 65.0, tiempoDeCarrera = 2.0, apodos = ["La nave","El fierro","Ferrucho"]}
 -}
 
 
-tramoCurva :: Float -> Float -> Auto -> Auto
-tramoCurva unAngulo unaLongitud unAuto = unAuto {desgaste = (ruedas unAuto + calcularDesgaste (fromIntegral (3)) unaLongitud unAngulo, chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (2))}
+tramoCurva :: Float -> Float -> Tramo
+tramoCurva unAngulo unaLongitud unAuto = (sumarDesgasteRuedas 3.0 unaLongitud unAngulo . sumarTiempoDeCarrera 1.0 unaLongitud (velocidadMaxima unAuto) 2.0) unAuto
+--unAuto {desgaste = (ruedas unAuto + calcularDesgaste (fromIntegral (3)) unaLongitud unAngulo, chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (2))}
 
-tramoRecto :: Float -> Auto -> Auto
-tramoRecto unaLongitud unAuto = unAuto {desgaste = (ruedas unAuto, chasis unAuto + calcularDesgaste unaLongitud (fromIntegral (1)) (fromIntegral (100))), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (1))}
+tramoRecto :: Float -> Tramo
+tramoRecto unaLongitud unAuto = (actualizarDesgasteChasis (+ calcularDesgaste unaLongitud 1.0 100.0) . sumarTiempoDeCarrera 1.0 unaLongitud (velocidadMaxima unAuto) 1.0) unAuto
+--unAuto {desgaste = (ruedas unAuto, chasis unAuto + calcularDesgaste unaLongitud (fromIntegral (1)) (fromIntegral (100))), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (1))}
 
-tramoZigzag :: Float -> Auto -> Auto
-tramoZigzag cambiosDeDireccion unAuto = unAuto {desgaste = (ruedas unAuto + calcularDesgaste (velocidadMaxima unAuto) cambiosDeDireccion (fromIntegral (10)), 5), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado cambiosDeDireccion (fromIntegral (3)) (fromIntegral (1)) (fromIntegral (1))}
+tramoZigzag :: Float -> Tramo
+tramoZigzag cambiosDeDireccion unAuto = (sumarDesgasteRuedas cambiosDeDireccion (velocidadMaxima unAuto) 10.0 . degasteDeChasisIgual5 . sumarTiempoDeCarrera cambiosDeDireccion 3.0 1.0 1.0) unAuto
+--unAuto {desgaste = (ruedas unAuto + calcularDesgaste (velocidadMaxima unAuto) cambiosDeDireccion (fromIntegral (10)), 5), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado cambiosDeDireccion (fromIntegral (3)) (fromIntegral (1)) (fromIntegral (1))}
 
-tramoRuloEnElAire :: Float -> Auto -> Auto
-tramoRuloEnElAire diametroDelRulo unAuto = unAuto {desgaste = (ruedas unAuto + calcularDesgaste diametroDelRulo 1.5 (fromIntegral (1)), chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (5)) diametroDelRulo (velocidadMaxima unAuto) (fromIntegral (1))}
+tramoRuloEnElAire :: Float -> Tramo
+tramoRuloEnElAire diametroDelRulo unAuto = (sumarDesgasteRuedas diametroDelRulo 1.5 1.0 . sumarTiempoDeCarrera 5.0 diametroDelRulo (velocidadMaxima unAuto) 1.0) unAuto
+--unAuto {desgaste = (ruedas unAuto + calcularDesgaste diametroDelRulo 1.5 (fromIntegral (1)), chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (5)) diametroDelRulo (velocidadMaxima unAuto) (fromIntegral (1))} 
 
-calcularDesgaste :: Fractional a => a -> a -> a -> a
-calcularDesgaste numero1 numero2 numero3 =  numero1 * numero2 / numero3
 
-calcularTiempoAgregado :: Fractional a => a -> a -> a -> a -> a
-calcularTiempoAgregado numero1 numero2 numero3 numero4 = numero1 * numero2 / ( numero3 / numero4 )
+actualizarDesgasteRuedas :: (Float -> Float) -> Auto -> Auto
+actualizarDesgasteRuedas unaFuncion unAuto = unAuto{ desgaste = ((unaFuncion.ruedas) unAuto, chasis unAuto)}
+
+actualizarDesgasteChasis :: (Float -> Float) -> Auto -> Auto
+actualizarDesgasteChasis unaFuncion unAuto = unAuto{ desgaste = (ruedas unAuto, (unaFuncion.chasis) unAuto) }
+
+actualizarTiempoDeCarrera :: (Float -> Float) -> Auto -> Auto
+actualizarTiempoDeCarrera unaFuncion unAuto = unAuto{ tiempoDeCarrera = (unaFuncion.tiempoDeCarrera) unAuto }
+
+
+sumarDesgasteRuedas :: Float -> Float -> Float -> Auto -> Auto
+sumarDesgasteRuedas numero1 numero2 numero3 unAuto = actualizarDesgasteRuedas (+ calcularDesgaste numero1 numero2 numero3) unAuto
+
+sumarTiempoDeCarrera :: Float -> Float -> Float -> Float -> Auto -> Auto
+sumarTiempoDeCarrera numero1 numero2 numero3 numero4 unAuto = actualizarTiempoDeCarrera (+ calcularTiempoAgregado numero1 numero2 numero3 numero4) unAuto
+
+degasteDeChasisIgual5 :: Auto -> Auto
+degasteDeChasisIgual5 unAuto = unAuto{ desgaste = (ruedas unAuto, 5) }
+
+
+calcularDesgaste :: Float -> Float -> Float -> Float
+calcularDesgaste numero1 numero2 numero3 =   numero1 * numero2 / numero3
+
+calcularTiempoAgregado :: Float -> Float -> Float -> Float -> Float
+calcularTiempoAgregado numero1 numero2 numero3 numero4 =  numero1 *  numero2 / ( numero3 / numero4 )
 
 -- Punto 5.a)
 {- 
