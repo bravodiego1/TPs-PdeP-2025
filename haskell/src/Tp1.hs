@@ -164,12 +164,14 @@ capacidadSuperCalifragilisticaespialidosa ferrari
 > 7
 -}
 
+calculosParaRiesgo :: Auto -> Float -> Float
+calculosParaRiesgo unAuto unNumero = ruedas unAuto * (velocidadMaxima unAuto) * unNumero
 
 --Punto 2g)
 riesgoDeUnAuto :: Auto -> Float --analiza el riesgo de un auto.
 riesgoDeUnAuto unAuto
-  |(not.estaEnBuenEstadoUnAuto) unAuto  = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
-  |otherwise = ruedas unAuto * (velocidadMaxima unAuto) * 0.1 
+  |(not.estaEnBuenEstadoUnAuto) unAuto  = calculosParaRiesgo unAuto 0.2
+  |otherwise = calculosParaRiesgo unAuto 0.1 
 
 {-
 Casos de Prueba
