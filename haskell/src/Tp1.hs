@@ -349,7 +349,7 @@ calcularTiempoAgregado :: Float -> Float -> Float -> Float -> Float
 calcularTiempoAgregado numero1 numero2 numero3 numero4 =  numero1 *  numero2 / ( numero3 / numero4 )
 
 -- Punto 5.a)
-{- 
+
 nivelDeJoyez :: [Auto] -> Int -- devuelve su nivel de joya.
 nivelDeJoyez unosAutos = (sum . map unidadesDeJoyez) unosAutos
 
@@ -358,7 +358,7 @@ unidadesDeJoyez unAuto
   | esUnaJoya unAuto && tiempoDeCarrera unAuto < 50 = 1
   | esUnaJoya unAuto && tiempoDeCarrera unAuto >= 50 = 2
   | otherwise = 0
--}
+
 
 {- CASOS DE PRUEBA:  
 > nivelDeJoyez  [UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 50, apodos = ["El rey del desierto"]}, UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 40, tiempoDeCarrera = 49, apodos = ["El rey del desierto"]}, UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 0, apodos = ["La nave", "El fierro", "Ferrucho"]}]
