@@ -73,8 +73,16 @@ ruedas unAuto = (fst . desgaste) unAuto
 -- Punto 2.a)
 
 estaEnBuenEstadoUnAuto :: Auto -> Bool
-estaEnBuenEstadoUnAuto unAuto = ((/="Peugeot") . marca) unAuto && ((tiempoDeCarrera unAuto >= 100 && chasis unAuto < 40 && ruedas unAuto < 60) || (tiempoDeCarrera unAuto < 100 && chasis unAuto < 20))
+estaEnBuenEstadoUnAuto unAuto = noEsPeugeot unAuto && (esTiempoDeCarreraMayorA100ChasisMenorA40YRuedasMayorA60 unAuto || esTiempoDeCarreraMenorA100YChasisMenorA20 unAuto)
 
+noEsPeugeot :: Auto -> Bool
+noEsPeugeot unAuto = ((/="Peugeot") . marca) unAuto
+
+esTiempoDeCarreraMenorA100YChasisMenorA20 :: Auto -> Bool
+esTiempoDeCarreraMenorA100YChasisMenorA20 unAuto = ((<100) . tiempoDeCarrera) unAuto && ((<20) . chasis) unAuto
+
+esTiempoDeCarreraMayorA100ChasisMenorA40YRuedasMayorA60 :: Auto -> Bool
+esTiempoDeCarreraMayorA100ChasisMenorA40YRuedasMayorA60 unAuto = ((>=100) . tiempoDeCarrera) unAuto && ((<40) . chasis) unAuto && ((<60) . ruedas) unAuto
 
 {- CASOS DE PRUEBA: 
 > estaEnBuenEstadoUnAuto (UnAuto "Peugeot" "504" (0,0) 40 0 ["El rey del desierto"])
@@ -98,6 +106,7 @@ noDaMas unAuto = (comienzaCon "La" (primerApodoDe unAuto) && chasis unAuto > 80 
 
 comienzaCon :: String -> String -> Bool
 comienzaCon unArticulo unaPalabra = ((==unArticulo) . take (length unArticulo)) unaPalabra
+
 primerApodoDe :: Auto -> String
 primerApodoDe unAuto = (head . apodos) unAuto
 
@@ -114,10 +123,13 @@ Da para más verifica -}
 -- Punto 2.c)
 
 esUnChiche :: Auto -> Bool
-esUnChiche unAuto = (chasis unAuto < 20 && (esParElPrimerApodoDe . apodos) unAuto) || (chasis unAuto < 50 && (not. esParElPrimerApodoDe . apodos) unAuto)
+esUnChiche unAuto = (((<20) . chasis) unAuto &&  esParLaCantidadDeApodosDe unAuto) || (((<50) . chasis) unAuto && (not . esParLaCantidadDeApodosDe) unAuto)
 
-esParElPrimerApodoDe :: [String] -> Bool
-esParElPrimerApodoDe unosApodos = (even . length) unosApodos
+esParLaCantidadDeApodosDe :: Auto -> Bool
+esParLaCantidadDeApodosDe unAuto = (even . cantidadDeApodosDe) unAuto
+
+cantidadDeApodosDe :: Auto -> Int
+cantidadDeApodosDe unAuto = (length . apodos) unAuto
 
 {- CASOS DE PRUEBA:
 > esUnChiche (UnAuto "Lamborghini" "Diablo" (0,7) 73 99 ["Lambo", "La bestia"])
@@ -132,7 +144,7 @@ Es un chiche  verifica
 
 -- punto 2d)
 esUnaJoya :: Auto -> Bool -- dependiendo su desgaste y la cantidad de apodos, analiza si es una joya o no.
-esUnaJoya unAuto = desgaste unAuto == (0,0) && (length.apodos) unAuto <= 1 
+esUnaJoya unAuto = desgaste unAuto == (0,0) && cantidadDeApodosDe unAuto <= 1 
 
 {-
 CASOS DE PRUEBA:
