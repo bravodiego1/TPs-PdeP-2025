@@ -316,7 +316,7 @@ tramoRecto unaLongitud unAuto = (actualizarDesgasteChasis (+ calcularDesgaste un
 --unAuto {desgaste = (ruedas unAuto, chasis unAuto + calcularDesgaste unaLongitud (fromIntegral (1)) (fromIntegral (100))), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (1))}
 
 tramoZigzag :: Float -> Tramo
-tramoZigzag cambiosDeDireccion unAuto = (sumarDesgasteRuedas cambiosDeDireccion (velocidadMaxima unAuto) 10 . desgasteDeChasisIgual5 . sumarTiempoDeCarrera cambiosDeDireccion 3 1 1) unAuto
+tramoZigzag cambiosDeDireccion unAuto = (sumarDesgasteRuedas cambiosDeDireccion (velocidadMaxima unAuto) 10 . desgasteDeChasisIgual 5 . sumarTiempoDeCarrera cambiosDeDireccion 3 1 1) unAuto
 --unAuto {desgaste = (ruedas unAuto + calcularDesgaste (velocidadMaxima unAuto) cambiosDeDireccion (fromIntegral (10)), 5), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado cambiosDeDireccion (fromIntegral (3)) (fromIntegral (1)) (fromIntegral (1))}
 
 tramoRuloEnElAire :: Float -> Tramo
@@ -341,8 +341,8 @@ sumarDesgasteRuedas numero1 numero2 numero3 unAuto = actualizarDesgasteRuedas (+
 sumarTiempoDeCarrera :: Float -> Float -> Float -> Float -> Auto -> Auto
 sumarTiempoDeCarrera numero1 numero2 numero3 numero4 unAuto = actualizarTiempoDeCarrera (+ calcularTiempoAgregado numero1 numero2 numero3 numero4) unAuto
 
-desgasteDeChasisIgual5 :: Auto -> Auto
-desgasteDeChasisIgual5 unAuto = unAuto{ desgaste = (ruedas unAuto, 5) }
+desgasteDeChasisIgual :: Float -> Auto -> Auto
+desgasteDeChasisIgual unNumero unAuto = unAuto{ desgaste = (ruedas unAuto, unNumero) }
 
 
 calcularDesgaste :: Float -> Float -> Float -> Float
