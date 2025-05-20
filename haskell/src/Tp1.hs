@@ -164,12 +164,14 @@ capacidadSuperCalifragilisticaespialidosa ferrari
 > 7
 -}
 
+calculosParaRiesgo :: Auto -> Float -> Float
+calculosParaRiesgo unAuto unNumero = ruedas unAuto * (velocidadMaxima unAuto) * unNumero
 
 --Punto 2g)
 riesgoDeUnAuto :: Auto -> Float --analiza el riesgo de un auto.
 riesgoDeUnAuto unAuto
-  |(not.estaEnBuenEstadoUnAuto) unAuto  = ruedas unAuto * (velocidadMaxima unAuto) * 0.2
-  |otherwise = ruedas unAuto * (velocidadMaxima unAuto) * 0.1 
+  |(not.estaEnBuenEstadoUnAuto) unAuto  = calculosParaRiesgo unAuto 0.2
+  |otherwise = calculosParaRiesgo unAuto 0.1 
 
 {-
 Casos de Prueba
@@ -309,11 +311,9 @@ UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (39.0,0.0), velocidadMaxim
 
 tramoCurva :: Float -> Float -> Tramo
 tramoCurva unAngulo unaLongitud unAuto = (sumarDesgasteRuedas 3 unaLongitud unAngulo . sumarTiempoDeCarrera 1 unaLongitud (velocidadMaxima unAuto) 2) unAuto
---unAuto {desgaste = (ruedas unAuto + calcularDesgaste (fromIntegral (3)) unaLongitud unAngulo, chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (2))}
 
 tramoRecto :: Float -> Tramo
 tramoRecto unaLongitud unAuto = (actualizarDesgasteChasis (+ calcularDesgaste unaLongitud 1 100) . sumarTiempoDeCarrera 1 unaLongitud (velocidadMaxima unAuto) 1) unAuto
---unAuto {desgaste = (ruedas unAuto, chasis unAuto + calcularDesgaste unaLongitud (fromIntegral (1)) (fromIntegral (100))), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (1)) unaLongitud (velocidadMaxima unAuto) (fromIntegral (1))}
 
 tramoZigzag :: Float -> Tramo
 tramoZigzag cambiosDeDireccion unAuto = (sumarDesgasteRuedas cambiosDeDireccion (velocidadMaxima unAuto) 10 . desgasteDeChasisIgual 5 . sumarTiempoDeCarrera cambiosDeDireccion 3 1 1) unAuto
@@ -321,8 +321,6 @@ tramoZigzag cambiosDeDireccion unAuto = (sumarDesgasteRuedas cambiosDeDireccion 
 
 tramoRuloEnElAire :: Float -> Tramo
 tramoRuloEnElAire diametroDelRulo unAuto = (sumarDesgasteRuedas diametroDelRulo 1.5 1 . sumarTiempoDeCarrera 5 diametroDelRulo (velocidadMaxima unAuto) 1) unAuto
---unAuto {desgaste = (ruedas unAuto + calcularDesgaste diametroDelRulo 1.5 (fromIntegral (1)), chasis unAuto), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado (fromIntegral (5)) diametroDelRulo (velocidadMaxima unAuto) (fromIntegral (1))} 
-
 
 
 actualizarDesgasteRuedas :: (Float -> Float) -> Auto -> Auto
@@ -352,7 +350,7 @@ calcularTiempoAgregado :: Float -> Float -> Float -> Float -> Float
 calcularTiempoAgregado numero1 numero2 numero3 numero4 =  numero1 *  numero2 / ( numero3 / numero4 )
 
 -- Punto 5.a)
-{- 
+
 nivelDeJoyez :: [Auto] -> Int -- devuelve su nivel de joya.
 nivelDeJoyez unosAutos = (sum . map unidadesDeJoyez) unosAutos
 
@@ -361,7 +359,7 @@ unidadesDeJoyez unAuto
   | esUnaJoya unAuto && tiempoDeCarrera unAuto < 50 = 1
   | esUnaJoya unAuto && tiempoDeCarrera unAuto >= 50 = 2
   | otherwise = 0
--}
+
 
 {- CASOS DE PRUEBA:  
 > nivelDeJoyez  [UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 50, apodos = ["El rey del desierto"]}, UnAuto {marca = "Peugeot", modelo = "504", desgaste = (0,0), velocidadMaxima = 40, tiempoDeCarrera = 49, apodos = ["El rey del desierto"]}, UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (0,0), velocidadMaxima = 0, tiempoDeCarrera = 0, apodos = ["La nave", "El fierro", "Ferrucho"]}]
@@ -370,11 +368,6 @@ unidadesDeJoyez unAuto
 --Punto 5b
 paraEntendidos :: [Auto] -> Bool
 paraEntendidos autos = all estaEnBuenEstadoUnAuto autos && all (tiempoDeCarreraMenorA200) autos
-{- 
-paraEntendidos autos
-  | all estaEnBuenEstadoUnAuto autos && all (tiempoDeCarreraMenorA200) autos = "El grupo es para entendidos"
-  | otherwise = "El grupo no es para entendidos"
--}
 
 tiempoDeCarreraMenorA200 :: Auto -> Bool
 tiempoDeCarreraMenorA200 unAuto = ((<=200).tiempoDeCarrera) unAuto
