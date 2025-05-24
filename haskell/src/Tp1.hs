@@ -395,3 +395,32 @@ False
 > paraEntendidos [(UnAuto "Ferrari" "F50" (0,0) 65 200 ["La nave", "El fierro", "Ferrucho"]),(UnAuto "Lamborghini" "Diablo" (4,7) 73 200 ["Lambo", "La bestia"])]
 True
 -}
+
+-- Punto 4
+
+{-
+boxes :: Tramo -> Tramo
+boxes unTramo unAuto 
+  | (not . estaEnBuenEstadoUnAuto . unTramo) unAuto = (sumarTiempoDeCarrera 10 1 1 1 . seReparaElAuto . unTramo) unAuto 
+  | otherwise = unTramo unAuto 
+-}
+
+-- falta la funcion seReparaElAuto
+
+mojado :: Tramo -> Tramo -- pide ORIGINALMENTE EL TRAMO, es decir si tengo 10 y le sumo 20 con el tramo, tengo 30, y debo obtener ese 20 para dps sumarle 50
+mojado unTramo unAuto = (sumarTiempoDeCarrera 0.5 (tiempoDeCarreraOriginalDe unTramo unAuto) 1 1 . unTramo) unAuto
+
+tiempoDeCarreraOriginalDe :: Tramo -> Auto -> Float
+tiempoDeCarreraOriginalDe unTramo unAuto = subtract (tiempoDeCarrera unAuto) . tiempoDeCarrera . unTramo $ unAuto
+
+ripio :: Tramo -> Tramo
+ripio unTramo unAuto = (sumarTiempoDeCarrera (tiempoDeCarreraOriginalDe unTramo unAuto) 1 1 1 . unTramo . unTramo) unAuto
+
+obstruccion :: Float -> Tramo -> Tramo
+obstruccion metros unTramo unAuto = (sumarDesgasteRuedas 2 metros 1 . unTramo) unAuto
+
+turbo :: Tramo -> Tramo
+turbo unTramo unAuto = actualizarVelocidadMaxima (const (velocidadMaxima unAuto)) . unTramo . actualizarVelocidadMaxima (*2) $ unAuto
+
+actualizarVelocidadMaxima :: (Float -> Float) -> Auto -> Auto
+actualizarVelocidadMaxima unaFuncion unAuto = unAuto {velocidadMaxima = (unaFuncion . velocidadMaxima) unAuto}
