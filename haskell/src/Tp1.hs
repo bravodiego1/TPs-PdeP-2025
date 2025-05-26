@@ -28,7 +28,7 @@ ferrari :: Auto
 ferrari = UnAuto {
     marca = "Ferrari",
     modelo = "F50",
-    desgaste = (0,0),
+    desgaste = (0,10),
     velocidadMaxima = 65,
     tiempoDeCarrera = 0,
     apodos = ["La nave", "El fierro", "Ferrucho"]
@@ -38,7 +38,7 @@ lamborghini :: Auto
 lamborghini = UnAuto {
     marca = "Lamborghini",
     modelo = "Diablo",
-    desgaste = (4, 7),
+    desgaste = (4, 20),
     velocidadMaxima = 73,
     tiempoDeCarrera = 0,
     apodos = ["Lambo", "La bestia"]
@@ -462,10 +462,9 @@ data Equipo = UnEquipo{
 grupo8 :: Equipo
 grupo8 = UnEquipo{
     nombreEquipo = "Grupo 8",
-    autos = [ferrari,lamborghini,fiat],
-    presupuesto = 50000
+    autos = [fiat],
+    presupuesto = 10000
 }
-
 
 -- 1A
 
@@ -476,11 +475,23 @@ agregarAutoAEquipo unAuto unEquipo
 
 -- 1B
 
-{-
-Realizar una reparación en equipo, que repare todos los autos de un equipo y descuente 
-del presupuesto el costo de reparación mientras tenga presupuesto suficiente. 
-El costo es $500 por cada punto de desgaste reducido en chasis.
+reduccionChasis :: [Auto] -> Float
+reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85 * 500
 
+repararAutosDeEquipo :: Equipo -> Equipo
+repararAutosDeEquipo unEquipo 
+    |(costoDeReduccionChasis unEquipo) < presupuesto unEquipo = (modificarAutosDeEquipo (map repararAuto) . modificarPresupuesto (subtract (costoDeReduccionChasis unEquipo))) unEquipo
+    |otherwise = unEquipo
+
+costoDeReduccionChasis :: Equipo -> Float
+costoDeReduccionChasis unEquipo = (reduccionChasis.autos) unEquipo
+
+-- 1C
+{-
+Optimizar autos en equipo. Se trabaja con los autos de un equipo y se “pone nitro” a cada uno, 
+hasta que se encuentre un auto para el que no haya más presupuesto. 
+El costo de poner nitro a un auto es de la velocidad máxima del auto (antes de poner nitro) * $100
 -}
+
 
 
