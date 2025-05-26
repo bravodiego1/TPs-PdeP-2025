@@ -424,3 +424,63 @@ turbo unTramo unAuto = actualizarVelocidadMaxima (const (velocidadMaxima unAuto)
 
 actualizarVelocidadMaxima :: (Float -> Float) -> Auto -> Auto
 actualizarVelocidadMaxima unaFuncion unAuto = unAuto {velocidadMaxima = (unaFuncion . velocidadMaxima) unAuto}
+
+--ENTREGA 2
+
+{-
+En las carreras, los autos pertenecen a equipos. Cada equipo tiene un nombre, un conjunto de autos y 
+un presupuesto disponible. En estos puntos se puede usar recursividad si hace falta.
+Modelar un equipo de competición con su nombre, autos y presupuesto. 
+Agregar un auto a un equipo, si el equipo tiene suficiente presupuesto. 
+Cada auto tiene un costo de inscripción proporcional a su velocidad máxima: $1000 por cada m/s.
+-}
+
+--Funciones Auxiliares
+
+modificarAutosDeEquipo :: ([Auto] -> [Auto]) -> Equipo -> Equipo
+modificarAutosDeEquipo modificacion unEquipo = unEquipo {autos = (modificacion.autos) unEquipo}
+
+modificarPresupuesto :: (Float -> Float) -> Equipo -> Equipo
+modificarPresupuesto modificacion unEquipo = unEquipo {presupuesto = (modificacion.presupuesto) unEquipo}
+
+precioAuto :: Auto -> Float
+precioAuto unAuto = velocidadMaxima unAuto * 1000
+
+comprarAuto :: Auto -> Equipo -> Equipo
+comprarAuto unAuto unEquipo= (modificarAutosDeEquipo ((:) unAuto) . modificarPresupuesto (subtract (precioAuto unAuto))) unEquipo
+
+--EQUIPO
+
+data Equipo = UnEquipo{
+    nombreEquipo :: String,
+    autos :: [Auto],
+    presupuesto :: Float
+} deriving (Show,Eq)
+
+--MODELO DE EQUIPO
+
+grupo8 :: Equipo
+grupo8 = UnEquipo{
+    nombreEquipo = "Grupo 8",
+    autos = [ferrari,lamborghini,fiat],
+    presupuesto = 50000
+}
+
+
+-- 1A
+
+agregarAutoAEquipo :: Auto -> Equipo -> Equipo
+agregarAutoAEquipo unAuto unEquipo 
+  |precioAuto unAuto <= presupuesto unEquipo = comprarAuto unAuto unEquipo
+  |otherwise = unEquipo
+
+-- 1B
+
+{-
+Realizar una reparación en equipo, que repare todos los autos de un equipo y descuente 
+del presupuesto el costo de reparación mientras tenga presupuesto suficiente. 
+El costo es $500 por cada punto de desgaste reducido en chasis.
+
+-}
+
+
