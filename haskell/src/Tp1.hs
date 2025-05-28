@@ -462,8 +462,8 @@ data Equipo = UnEquipo{
 grupo8 :: Equipo
 grupo8 = UnEquipo{
     nombreEquipo = "Grupo 8",
-    autos = [fiat],
-    presupuesto = 10000
+    autos = [ferrari,lamborghini],
+    presupuesto = 20000
 }
 
 -- 1A
@@ -476,7 +476,7 @@ agregarAutoAEquipo unAuto unEquipo
 -- 1B
 
 reduccionChasis :: [Auto] -> Float
-reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85 * 500
+reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85 
 
 repararAutosDeEquipo :: Equipo -> Equipo
 repararAutosDeEquipo unEquipo 
@@ -484,7 +484,7 @@ repararAutosDeEquipo unEquipo
     |otherwise = unEquipo
 
 costoDeReduccionChasis :: Equipo -> Float
-costoDeReduccionChasis unEquipo = (reduccionChasis.autos) unEquipo
+costoDeReduccionChasis unEquipo = (reduccionChasis.autos) unEquipo * 500
 
 -- 1C
 {-
@@ -493,5 +493,15 @@ hasta que se encuentre un auto para el que no haya más presupuesto.
 El costo de poner nitro a un auto es de la velocidad máxima del auto (antes de poner nitro) * $100
 -}
 
+{-
+restarPresupuesto :: Float -> Equipo -> Equipo
+restarPresupuesto costoARestar unEquipo = unEquipo{presupuesto = presupuesto unEquipo - costoARestar}
+-}
 
 
+
+costoDePonerNitroAAuto :: Equipo -> Float
+costoDePonerNitroAAuto unEquipo = (sum.map(velocidadMaxima) $  (autos unEquipo)) * 100
+
+optimizarAutosDeEquipo :: Equipo -> Equipo
+optimizarAutosDeEquipo unEquipo = (modificarPresupuesto(subtract (costoDePonerNitroAAuto unEquipo)).modificarAutosDeEquipo(map autoConNitro)) unEquipo
