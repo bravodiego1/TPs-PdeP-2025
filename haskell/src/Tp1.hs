@@ -449,6 +449,26 @@ precioAuto unAuto = velocidadMaxima unAuto * 1000
 comprarAuto :: Auto -> Equipo -> Equipo
 comprarAuto unAuto unEquipo= (modificarAutosDeEquipo ((:) unAuto) . modificarPresupuesto (subtract (precioAuto unAuto))) unEquipo
 
+costoDeFerrarizarUnAuto :: Auto -> Float
+costoDeFerrarizarUnAuto unAuto
+  |marca unAuto == "Ferrari" = 0
+  |otherwise = 3500
+
+cambiarMarcaAFerrari :: Auto -> Auto
+cambiarMarcaAFerrari unAuto = unAuto {marca = "Ferrari"}
+
+cambiarModeloAF50 :: Auto -> Auto
+cambiarModeloAF50 unAuto = unAuto {modelo = "F50"}
+
+esFerrari :: Auto -> Bool
+esFerrari unAuto = (== "Ferrari").marca $ unAuto   
+
+costoPorPonerNitro :: Float
+costoPorPonerNitro = 100
+
+costoNitro :: Auto -> Float
+costoNitro unAuto = (velocidadMaxima unAuto) * costoPorPonerNitro
+
 --EQUIPO
 
 data Equipo = UnEquipo{
@@ -462,7 +482,7 @@ data Equipo = UnEquipo{
 grupo8 :: Equipo
 grupo8 = UnEquipo{
     nombreEquipo = "Grupo 8",
-    autos = [peugeot,lamborghini],
+    autos = [ferrari,lamborghini],
     presupuesto = 20000
 }
 
@@ -488,41 +508,27 @@ costoDeReduccionChasis unEquipo = (reduccionChasis.autos) unEquipo * 500
 
 -- 1C
 
-{-
-Optimizar autos en equipo. Se trabaja con los autos de un equipo y se “pone nitro” a cada uno, 
-hasta que se encuentre un auto para el que no haya más presupuesto. 
-El costo de poner nitro a un auto es de la velocidad máxima del auto (antes de poner nitro) * $100
-
-costoPorPonerNitro :: Float
-costoPorPonerNitro = 100
-
-costoNitro :: Auto -> Float
-costoNitro unAuto = (velocidadMaxima unAuto) * costoPorPonerNitro
 
 optimizarAutos :: Equipo -> Equipo
 optimizarAutos unEquipo = unEquipo { 
-  autos = optimizarListaDeAutos (autos equipo) (presupuesto equipo), 
+  autos = optimizarListaDeAutos (autos unEquipo) (presupuesto unEquipo), 
   presupuesto = presupuestoFinalAplicandoElNitro (autos unEquipo) (presupuesto unEquipo)
--} 
+}
 
+optimizarListaDeAutos :: [Auto] -> Float -> [Auto]
+optimizarListaDeAutos [] _ = []
+optimizarListaDeAutos (primerAuto:restoDeLosAutos) presupuesto
+    | costoNitro primerAuto <= presupuesto = autoConNitro primerAuto : optimizarListaDeAutos restoDeLosAutos (presupuesto - costoNitro primerAuto)
+    | otherwise = primerAuto : restoDeLosAutos
+
+presupuestoFinalAplicandoElNitro :: [Auto] -> Float -> Float
+presupuestoFinalAplicandoElNitro [] presupuesto = presupuesto
+presupuestoFinalAplicandoElNitro (primerAuto:restoDeLosAutos) presupuesto
+    | costoNitro primerAuto <= presupuesto = presupuestoFinalAplicandoElNitro restoDeLosAutos (presupuesto - costoNitro primerAuto)
+    | otherwise = presupuesto
 
 --1D
-{-Ferrarizar: llevar todos los autos al desarmadero para cambiar su marca a Ferrari y modelo a F50. 
-Realizar esto hasta que no alcance el presupuesto. El costo de convertir un auto en una Ferrari es de $3500. 
-Si un auto del equipo ya era Ferrari, queda igual que como estaba y no hay costo para ese auto.
--}
 
-costoDeFerrarizarUnAuto :: Auto -> Float
-costoDeFerrarizarUnAuto unAuto
-  |marca unAuto == "Ferrari" = 0
-  |otherwise = 3500
-
-
-cambiarMarcaAFerrari :: Auto -> Auto
-cambiarMarcaAFerrari unAuto = unAuto {marca = "Ferrari"}
-
-cambiarModeloAF50 :: Auto -> Auto
-cambiarModeloAF50 unAuto = unAuto {modelo = "F50"}
 
 hacerFerrari :: Auto -> Auto
 hacerFerrari unAuto = (cambiarMarcaAFerrari.cambiarModeloAF50) unAuto
@@ -547,6 +553,3 @@ presupuestoFinal (primerAuto:restoDeLosAutos) presupuesto
     | esFerrari primerAuto = presupuestoFinal restoDeLosAutos presupuesto
     | presupuesto >= costoDeFerrarizarUnAuto primerAuto  = presupuestoFinal restoDeLosAutos (presupuesto - costoDeFerrarizarUnAuto primerAuto)
     | otherwise = presupuestoFinal restoDeLosAutos presupuesto
-
-esFerrari :: Auto -> Bool
-esFerrari unAuto = (== "Ferrari").marca $ unAuto   
