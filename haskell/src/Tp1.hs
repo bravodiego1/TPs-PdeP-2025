@@ -18,10 +18,7 @@ data Auto = UnAuto {
 data Pista = UnaPista {
     nombre :: String,
     pais :: String,
-    precioBaseDeEntrada :: Int,
-    curvas :: Auto -> Auto,
-    rectas :: Auto -> Auto,
-    boxes ::  Auto -> Auto
+    precioBaseDeEntrada :: Int
 } 
 
 ferrari :: Auto
@@ -398,12 +395,11 @@ True
 
 -- Punto 4
 
-{-
 boxes :: Tramo -> Tramo
 boxes unTramo unAuto 
-  | (not . estaEnBuenEstadoUnAuto . unTramo) unAuto = (sumarTiempoDeCarrera 10 1 1 1 . seReparaElAuto . unTramo) unAuto 
+  |(not . estaEnBuenEstadoUnAuto . unTramo) unAuto = (sumarTiempoDeCarrera 10 1 1 1 . repararAuto . unTramo) unAuto 
   | otherwise = unTramo unAuto 
--}
+
 
 -- falta la funcion seReparaElAuto
 
