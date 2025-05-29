@@ -462,7 +462,7 @@ data Equipo = UnEquipo{
 grupo8 :: Equipo
 grupo8 = UnEquipo{
     nombreEquipo = "Grupo 8",
-    autos = [ferrari,lamborghini],
+    autos = [peugeot,lamborghini],
     presupuesto = 20000
 }
 
@@ -487,21 +487,66 @@ costoDeReduccionChasis :: Equipo -> Float
 costoDeReduccionChasis unEquipo = (reduccionChasis.autos) unEquipo * 500
 
 -- 1C
+
 {-
 Optimizar autos en equipo. Se trabaja con los autos de un equipo y se “pone nitro” a cada uno, 
 hasta que se encuentre un auto para el que no haya más presupuesto. 
 El costo de poner nitro a un auto es de la velocidad máxima del auto (antes de poner nitro) * $100
+
+costoPorPonerNitro :: Float
+costoPorPonerNitro = 100
+
+costoNitro :: Auto -> Float
+costoNitro unAuto = (velocidadMaxima unAuto) * costoPorPonerNitro
+
+optimizarAutos :: Equipo -> Equipo
+optimizarAutos unEquipo = unEquipo { 
+  autos = optimizarListaDeAutos (autos equipo) (presupuesto equipo), 
+  presupuesto = presupuestoFinalAplicandoElNitro (autos unEquipo) (presupuesto unEquipo)
+-} 
+
+
+--1D
+{-Ferrarizar: llevar todos los autos al desarmadero para cambiar su marca a Ferrari y modelo a F50. 
+Realizar esto hasta que no alcance el presupuesto. El costo de convertir un auto en una Ferrari es de $3500. 
+Si un auto del equipo ya era Ferrari, queda igual que como estaba y no hay costo para ese auto.
 -}
 
-{-
-restarPresupuesto :: Float -> Equipo -> Equipo
-restarPresupuesto costoARestar unEquipo = unEquipo{presupuesto = presupuesto unEquipo - costoARestar}
--}
+costoDeFerrarizarUnAuto :: Auto -> Float
+costoDeFerrarizarUnAuto unAuto
+  |marca unAuto == "Ferrari" = 0
+  |otherwise = 3500
 
 
+cambiarMarcaAFerrari :: Auto -> Auto
+cambiarMarcaAFerrari unAuto = unAuto {marca = "Ferrari"}
 
-costoDePonerNitroAAuto :: Equipo -> Float
-costoDePonerNitroAAuto unEquipo = (sum.map(velocidadMaxima) $  (autos unEquipo)) * 100
+cambiarModeloAF50 :: Auto -> Auto
+cambiarModeloAF50 unAuto = unAuto {modelo = "F50"}
 
-optimizarAutosDeEquipo :: Equipo -> Equipo
-optimizarAutosDeEquipo unEquipo = (modificarPresupuesto(subtract (costoDePonerNitroAAuto unEquipo)).modificarAutosDeEquipo(map autoConNitro)) unEquipo
+hacerFerrari :: Auto -> Auto
+hacerFerrari unAuto = (cambiarMarcaAFerrari.cambiarModeloAF50) unAuto
+
+ferrarizar :: Equipo -> Equipo
+ferrarizar unEquipo = unEquipo {
+  nombreEquipo = nombreEquipo unEquipo,
+  autos = ferrarizarAutos (autos unEquipo) (presupuesto unEquipo),
+  presupuesto = presupuestoFinal (autos unEquipo) (presupuesto unEquipo)
+}
+
+ferrarizarAutos :: [Auto] -> Float -> [Auto]
+ferrarizarAutos [] _ = []
+ferrarizarAutos (primerAuto:restoDeLosAutos) presupuesto 
+  |esFerrari primerAuto = primerAuto : ferrarizarAutos restoDeLosAutos presupuesto
+  |presupuesto >= costoDeFerrarizarUnAuto primerAuto = hacerFerrari primerAuto : ferrarizarAutos restoDeLosAutos (presupuesto - costoDeFerrarizarUnAuto primerAuto)
+  |otherwise = primerAuto : ferrarizarAutos restoDeLosAutos presupuesto
+
+presupuestoFinal :: [Auto] -> Float -> Float
+presupuestoFinal [] presupuesto = presupuesto
+presupuestoFinal (primerAuto:restoDeLosAutos) presupuesto
+    | esFerrari primerAuto = presupuestoFinal restoDeLosAutos presupuesto
+    | presupuesto >= costoDeFerrarizarUnAuto primerAuto  = presupuestoFinal restoDeLosAutos (presupuesto - costoDeFerrarizarUnAuto primerAuto)
+    | otherwise = presupuestoFinal restoDeLosAutos presupuesto
+
+esFerrari :: Auto -> Bool
+esFerrari unAuto = (== "Ferrari").marca $ unAuto   
