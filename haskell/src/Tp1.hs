@@ -15,12 +15,6 @@ data Auto = UnAuto {
     apodos :: [String]
 } deriving (Show, Eq)
 
-data Pista = UnaPista {
-    nombre :: String,
-    pais :: String,
-    precioBaseDeEntrada :: Int
-} 
-
 ferrari :: Auto
 ferrari = UnAuto {
     marca = "Ferrari",
@@ -496,11 +490,8 @@ reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85
 
 repararAutosDeEquipo :: Equipo -> Equipo
 repararAutosDeEquipo unEquipo 
-    |(costoDeReduccionChasis unEquipo) < presupuesto unEquipo = (modificarAutosDeEquipo (map repararAuto) . modificarPresupuesto (subtract (costoDeReduccionChasis unEquipo))) unEquipo
+    |(costoTotalDeReparacion unEquipo) < presupuesto unEquipo = (modificarAutosDeEquipo (map repararAuto) . modificarPresupuesto (subtract (costoTotalDeReparacion unEquipo))) unEquipo
     |otherwise = unEquipo
-
-costoDeReduccionChasis :: Equipo -> Float
-costoDeReduccionChasis unEquipo = (reduccionChasis.autos) unEquipo * 500
 
 -- 1C
 
@@ -549,3 +540,70 @@ presupuestoFinal (primerAuto:restoDeLosAutos) presupuesto
     | esFerrari primerAuto = presupuestoFinal restoDeLosAutos presupuesto
     | presupuesto >= costoDeFerrarizarUnAuto primerAuto  = presupuestoFinal restoDeLosAutos (presupuesto - costoDeFerrarizarUnAuto primerAuto)
     | otherwise = presupuestoFinal restoDeLosAutos presupuesto
+
+--Punto 2
+costoTotalDeReparacion :: Equipo -> Float
+costoTotalDeReparacion unEquipo = (reduccionChasis.autos) unEquipo * 500
+
+{-
+CASOS DE PRUEBA 2:
+
+  > costoTotalDeReparacion grupo8 
+  12750.0
+El grupo 8 está compuesto por
+un ferrari de chasis 10 y 
+un lamborghini de chasis 20, 
+igualemente:
+  > costoTotalDeReparacion (UnEquipo "Equipo" [ferrari,lamborghini] 0)
+  12750.0
+
+  > costoTotalDeReparacion (UnEquipo "Equipo" [fiat,peugeot] 0)
+  21250.0
+Para este último caso de prueba del punto 2, se cambió el valor de chasis de los autos.
+-}
+
+--Punto 6
+data Pista = UnaPista {
+nombre :: String,
+pais :: String,
+precioDeEntrada :: Int,
+circuito :: [Tramo]
+}
+
+vueltaALaManzana :: Pista
+vueltaALaManzana = UnaPista {
+nombre = "La manzana",
+pais = "Italia",
+precioDeEntrada = 30,
+circuito = 
+  [tramoRecto 130, tramoCurva 90 13, tramoRecto 130, tramoCurva 90 13, tramoRecto 130, tramoCurva 90 13, tramoRecto 130, tramoCurva 90 13]
+--aplicación parcial en el llamado de tramos
+}
+
+superPista :: Pista
+superPista = UnaPista {
+pais = "Argentina",
+precioDeEntrada = 300,
+circuito = 
+  [tramoRectoClassic, curvaTranca, turbo tramito, mojado tramito, tramoRuloEnElAire 10, obstruccion 2 (tramoCurva 80 400), tramoCurva 115 650, tramoRecto 970, curvaPeligrosa, ripio tramito, boxes (tramoRecto 800), obstruccion 5 casiCurva, tramoZigzag 2, mojado.ripio $ deseoDeMuerte, ruloClasico, zigZagLoco]
+}
+
+peganLaVuelta :: Pista -> [Auto] -> [Auto]
+peganLaVuelta unaPista unaListaDeAutos = map (pegaLaVuelta (circuito unaPista)) unaListaDeAutos
+
+pegaLaVuelta :: [Tramo] -> Auto -> Auto
+pegaLaVuelta unCircuito unAuto = foldr recorre unAuto unCircuito
+
+recorre :: Tramo -> Auto -> Auto
+recorre unTramo unAuto 
+  | not.noDaMas $ unAuto = unTramo unAuto
+  | otherwise = unAuto
+
+{-
+CASO DE PRUEBA 6:
+> peganLaVuelta vueltaALaManzana [ferrari,peugeot]
+[UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (1.7333333,15.200001), velocidadMaxima = 65.0, tiempoDeCarrera = 9.6, apodos = ["La nave","El fierro","Ferrucho"]},
+UnAuto {marca = "Peugeot", modelo = "504", desgaste = (80.3,3.8999999), velocidadMaxima = 40.0, tiempoDeCarrera = 11.7, apodos = ["El rey del desierto"]}]
+
+Se cambió el valor de chasis de ruedas del peugeot para este caso de pueba.
+-}
