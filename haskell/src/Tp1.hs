@@ -49,7 +49,7 @@ peugeot :: Auto
 peugeot = UnAuto {
     marca = "Peugeot",
     modelo = "504",
-    desgaste = (79,0),
+    desgaste = (0,0),
     velocidadMaxima = 40,
     tiempoDeCarrera = 0,
     apodos = ["El rey del desierto"]
