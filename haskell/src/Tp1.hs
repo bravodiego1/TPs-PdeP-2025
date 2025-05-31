@@ -49,7 +49,7 @@ peugeot :: Auto
 peugeot = UnAuto {
     marca = "Peugeot",
     modelo = "504",
-    desgaste = (0,0),
+    desgaste = (79,0),
     velocidadMaxima = 40,
     tiempoDeCarrera = 0,
     apodos = ["El rey del desierto"]
@@ -575,10 +575,13 @@ vueltaALaManzana = UnaPista {
 nombre = "La manzana",
 pais = "Italia",
 precioDeEntrada = 30,
-circuito = 
-  [tramoRecto 130, tramoCurva 90 13, tramoRecto 130, tramoCurva 90 13, tramoRecto 130, tramoCurva 90 13, tramoRecto 130, tramoCurva 90 13]
+circuito = circuitoVueltaALaManzana
+  --[tramoRecto 130, tramoCurva 90 13, tramoRecto 130, tramoCurva 90 13, tramoRecto 130, tramoCurva 90 13, tramoRecto 130, tramoCurva 90 13]
 --aplicación parcial en el llamado de tramos
 }
+
+circuitoVueltaALaManzana :: [Tramo]
+circuitoVueltaALaManzana = concat.replicate 4 $ [tramoRecto 130, tramoCurva 90 13]
 
 superPista :: Pista
 superPista = UnaPista {
