@@ -595,10 +595,11 @@ peganLaVuelta :: Pista -> [Auto] -> [Auto]
 peganLaVuelta unaPista unaListaDeAutos = map (pegaLaVuelta (circuito unaPista)) unaListaDeAutos
 
 pegaLaVuelta :: [Tramo] -> Auto -> Auto
-pegaLaVuelta unCircuito unAuto = foldr recorre unAuto unCircuito
+pegaLaVuelta unCircuito unAuto = foldl recorre unAuto unCircuito
+--foldr empezaba por el último tramo, y cuando estaba recorriendo "manualmente" lo hacía desde el primero al último, de izquierda a derecha
 
-recorre :: Tramo -> Auto -> Auto
-recorre unTramo unAuto 
+recorre :: Auto -> Tramo -> Auto
+recorre unAuto unTramo
   | not.noDaMas $ unAuto = unTramo unAuto
   | otherwise = unAuto
 
@@ -608,5 +609,5 @@ CASO DE PRUEBA 6:
 [UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (1.7333333,15.200001), velocidadMaxima = 65.0, tiempoDeCarrera = 9.6, apodos = ["La nave","El fierro","Ferrucho"]},
 UnAuto {marca = "Peugeot", modelo = "504", desgaste = (80.3,3.8999999), velocidadMaxima = 40.0, tiempoDeCarrera = 11.7, apodos = ["El rey del desierto"]}]
 
-Se cambió el valor de chasis de ruedas del peugeot para este caso de pueba.
+Se cambió el valor de chasis de ruedas del peugeot para este caso de pueba (de 0 a 79).
 -}
