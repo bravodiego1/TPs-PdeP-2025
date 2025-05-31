@@ -562,6 +562,30 @@ igualemente:
 Para este último caso de prueba del punto 2, se cambió el valor de chasis de los autos.
 -}
 
+--Punto 3a)
+
+equipoInfinia :: Equipo
+equipoInfinia = UnEquipo {
+    nombreEquipo = "Infinia", 
+    autos = autosInfinia, 
+    presupuesto = 5000
+}
+
+autosInfinia :: [Auto]
+autosInfinia = map ferrariInfinia [1.0 ..]
+
+ferrariInfinia :: Float -> Auto
+ferrariInfinia n = actualizarDesgasteChasis (const 1) . actualizarVelocidadMaxima (*n) $ ferrari 
+
+--Punto 3b) 
+
+--Punto 5
+
+pasarPorTramo2 :: Tramo -> Auto -> Auto
+pasarPorTramo2 unTramo unAuto 
+  | not (noDaMas unAuto) = unTramo unAuto 
+  | otherwise = id unAuto
+
 --Punto 6
 data Pista = UnaPista {
 nombre :: String,
