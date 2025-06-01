@@ -526,7 +526,6 @@ Para este último caso de prueba del punto 2, se cambió el valor de chasis de l
 -}
 
 --Punto 3a)
-
 equipoInfinia :: Equipo
 equipoInfinia = UnEquipo {
     nombreEquipo = "Infinia", 
@@ -548,8 +547,11 @@ que no puede reducirse más, con lo cual no hay ningún auto para reparar y por 
 el presupuesto nunca se agota, que es justamente lo que la función necesita para dejar de iterar-}
 
 --ii) 
-{-Devuelve un equipo infinia con una lista vacía de autos porque el costo de ponerle nitro al primer 
-auto del equipo infinia es superior al del presupuesto-}
+{-Se cuelga, porque la funcion de optimizarAutos toma el primer auto de la lista de autos del equipo infinia,
+calcula el costo de optimizacion y le da un numero mayor al presupuesto del equipo, asi que no realiza la 
+modificacion y el presupuesto no disminuye. Continua el mismo proceso con el auto siguiente, tiene el mismo 
+resultado y asi infinitamente, porque ademas de ser infinitos autos, todos los autos infinia son iguales 
+por lo cual no pueden ser optimizados-}
 
 --iii)
 {-Se cuelga. Como todos los autos del equipo infinia son de marca Ferrari y modelo F50,
@@ -557,9 +559,9 @@ la función ferrarizar no podrá convertir a ninguno de ellos, lo que no disminu
 presupuesto y provocará que la función siga buscando infinitamente un auto para convertir-}
 
 --iv)
-{-Se cuelga. Porque la lista debe ser recorrida en su enteridad para realizar tanto el calculo del costo 
-de reparacion de cada uno los de los autos del equipo infinia, como la suma de dichos costos. Ya que la lista es
-infinita, la funcion jamas lo conseguira-}
+{-Se cuelga, porque la lista debe ser recorrida en su enteridad para realizar tanto el calculo del costo 
+de reparacion de cada uno los de los autos del equipo infinia, como la suma de dichos costos. Ya que la 
+lista es infinita, la funcion jamas lo conseguira-}
 
 -- Punto 4
 
