@@ -579,6 +579,25 @@ ferrariInfinia n = actualizarDesgasteChasis (const 1) . actualizarVelocidadMaxim
 
 --Punto 3b) 
 
+--i. 
+{-Se cuelga, porque los infinitos autos del equipo infinia tienen un desgaste de chasis igual a 1 
+y no puede reducirse más allá de eso, con lo cual no hay ningún auto para reparar y por ese motivo 
+el presupuesto nunca se agota, que es lo que la función necesita para dejar de iterar-}
+
+--ii. 
+{-Devuelve un equipo infinia con una lista vacía de autos porque el costo de ponerle nitro a un  
+auto del equipo infinia, el primer auto, es superior al del presupuesto-}
+
+--iii. 
+{-Se cuelga. Todos los autos del equipo infinia son de marca Ferrari y modelo F50, por lo que 
+la función ferrarizar no podrá convertir ninguno de los autos, lo que no disminuira el 
+presupuesto y provocará que la función siga buscando infinitamente un auto para convertir-}
+
+--iv. 
+{-Se cuelga. Porque la lista debe ser recorrida en su enteridad para realizar tanto la suma total como 
+el calculo del costo de reparacion de cada uno los de los autos del equipo infinia. Ya que la lista es
+infinita, la funcion jamas lo conseguira -}
+
 --Punto 5
 
 pasarPorTramo2 :: Tramo -> Auto -> Auto
@@ -588,10 +607,10 @@ pasarPorTramo2 unTramo unAuto
 
 --Punto 6
 data Pista = UnaPista {
-nombre :: String,
-pais :: String,
-precioDeEntrada :: Int,
-circuito :: [Tramo]
+  nombre :: String,
+  pais :: String,
+  precioDeEntrada :: Int,
+  circuito :: [Tramo]
 }
 
 vueltaALaManzana :: Pista
