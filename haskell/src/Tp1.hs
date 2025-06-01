@@ -39,7 +39,7 @@ fiat :: Auto
 fiat = UnAuto {
     marca = "Fiat",
     modelo = "600",
-    desgaste = (27, 33),
+    desgaste = (27, 50),
     velocidadMaxima = 44,
     tiempoDeCarrera = 0 ,
     apodos = ["La Bocha", "La bolita", "Fitito"]
@@ -387,34 +387,6 @@ False
 True
 -}
 
--- Punto 4
-
-boxes :: Tramo -> Tramo
-boxes unTramo unAuto 
-  |(not . estaEnBuenEstadoUnAuto . unTramo) unAuto = (sumarTiempoDeCarrera 10 1 1 1 . repararAuto . unTramo) unAuto 
-  | otherwise = unTramo unAuto 
-
-
--- falta la funcion seReparaElAuto
-
-mojado :: Tramo -> Tramo -- pide ORIGINALMENTE EL TRAMO, es decir si tengo 10 y le sumo 20 con el tramo, tengo 30, y debo obtener ese 20 para dps sumarle 50
-mojado unTramo unAuto = (sumarTiempoDeCarrera 0.5 (tiempoDeCarreraOriginalDe unTramo unAuto) 1 1 . unTramo) unAuto
-
-tiempoDeCarreraOriginalDe :: Tramo -> Auto -> Float
-tiempoDeCarreraOriginalDe unTramo unAuto = subtract (tiempoDeCarrera unAuto) . tiempoDeCarrera . unTramo $ unAuto
-
-ripio :: Tramo -> Tramo
-ripio unTramo unAuto = (sumarTiempoDeCarrera (tiempoDeCarreraOriginalDe unTramo unAuto) 1 1 1 . unTramo . unTramo) unAuto
-
-obstruccion :: Float -> Tramo -> Tramo
-obstruccion metros unTramo unAuto = (sumarDesgasteRuedas 2 metros 1 . unTramo) unAuto
-
-turbo :: Tramo -> Tramo
-turbo unTramo unAuto = actualizarVelocidadMaxima (const (velocidadMaxima unAuto)) . unTramo . actualizarVelocidadMaxima (*2) $ unAuto
-
-actualizarVelocidadMaxima :: (Float -> Float) -> Auto -> Auto
-actualizarVelocidadMaxima unaFuncion unAuto = unAuto {velocidadMaxima = (unaFuncion . velocidadMaxima) unAuto}
-
 --ENTREGA 2
 
 {-
@@ -433,11 +405,6 @@ modificarAutosDeEquipo modificacion unEquipo = unEquipo {autos = (modificacion.a
 modificarPresupuesto :: (Float -> Float) -> Equipo -> Equipo
 modificarPresupuesto modificacion unEquipo = unEquipo {presupuesto = (modificacion.presupuesto) unEquipo}
 
-precioAuto :: Auto -> Float
-precioAuto unAuto = velocidadMaxima unAuto * 1000
-
-comprarAuto :: Auto -> Equipo -> Equipo
-comprarAuto unAuto unEquipo= (modificarAutosDeEquipo ((:) unAuto) . modificarPresupuesto (subtract (precioAuto unAuto))) unEquipo
 
 costoDeFerrarizarUnAuto :: Auto -> Float
 costoDeFerrarizarUnAuto unAuto
@@ -456,8 +423,20 @@ esFerrari unAuto = (== "Ferrari").marca $ unAuto
 costoPorPonerNitro :: Float
 costoPorPonerNitro = 100
 
+costoPorRepararAuto :: Float
+costoPorRepararAuto = 500
+
 costoNitro :: Auto -> Float
 costoNitro unAuto = (velocidadMaxima unAuto) * costoPorPonerNitro
+
+costoReparacionAuto :: Auto -> Float
+costoReparacionAuto unAuto = (chasis unAuto) * 0.85 * costoPorRepararAuto
+
+reduccionChasis :: [Auto] -> Float
+reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85 
+
+hacerFerrari :: Auto -> Auto
+hacerFerrari unAuto = (cambiarMarcaAFerrari.cambiarModeloAF50) unAuto
 
 --EQUIPO
 
@@ -473,72 +452,57 @@ grupo8 :: Equipo
 grupo8 = UnEquipo{
     nombreEquipo = "Grupo 8",
     autos = [ferrari,lamborghini],
-    presupuesto = 20000
-}
+    presupuesto = 10000
+} 
 
 -- 1A
+
+precioAuto :: Auto -> Float
+precioAuto unAuto = velocidadMaxima unAuto * 1000
+
+comprarAuto :: Auto -> Equipo -> Equipo
+comprarAuto unAuto unEquipo= (modificarAutosDeEquipo ((:) unAuto) . modificarPresupuesto (subtract (precioAuto unAuto))) unEquipo
 
 agregarAutoAEquipo :: Auto -> Equipo -> Equipo
 agregarAutoAEquipo unAuto unEquipo 
   |precioAuto unAuto <= presupuesto unEquipo = comprarAuto unAuto unEquipo
   |otherwise = unEquipo
 
--- 1B
+--Funciones a utilizar en 1B/1C/1D
+type Presupuesto = Float
 
-reduccionChasis :: [Auto] -> Float
-reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85 
+modificarListaDeAutos :: (Auto -> Auto) -> (Auto -> Float)-> [Auto] -> Presupuesto -> [Auto]
+modificarListaDeAutos _ _ [] _ = []
+modificarListaDeAutos modificacionDeAuto costoAMandar (primerAuto:restoDeLosAutos) presupuesto
+  |modificacionDeAuto primerAuto == hacerFerrari primerAuto && esFerrari primerAuto = primerAuto : modificarListaDeAutos (hacerFerrari) costoAMandar restoDeLosAutos presupuesto
+  |costoAMandar primerAuto <= presupuesto = modificacionDeAuto primerAuto : modificarListaDeAutos modificacionDeAuto costoAMandar restoDeLosAutos (presupuesto - costoAMandar primerAuto)
+  |otherwise = primerAuto : restoDeLosAutos
 
+modificarPresupuestoDeAutos :: (Auto -> Auto) -> (Auto -> Float) -> [Auto] -> Presupuesto -> Presupuesto
+modificarPresupuestoDeAutos _ _ [] presupuesto = presupuesto
+modificarPresupuestoDeAutos modificacionDeAuto costoAMandar (primerAuto:restoDeLosAutos) presupuesto
+  |modificacionDeAuto primerAuto == hacerFerrari primerAuto && esFerrari primerAuto = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos presupuesto
+  |costoAMandar primerAuto  <= presupuesto = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos (presupuesto - costoAMandar primerAuto) 
+  |otherwise = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos presupuesto
+
+--1B
 repararAutosDeEquipo :: Equipo -> Equipo
-repararAutosDeEquipo unEquipo 
-    |(costoTotalDeReparacion unEquipo) < presupuesto unEquipo = (modificarAutosDeEquipo (map repararAuto) . modificarPresupuesto (subtract (costoTotalDeReparacion unEquipo))) unEquipo
-    |otherwise = unEquipo
-
--- 1C
-
-
+repararAutosDeEquipo unEquipo = unEquipo{
+  autos = modificarListaDeAutos repararAuto costoReparacionAuto (autos unEquipo) (presupuesto unEquipo),
+  presupuesto = modificarPresupuestoDeAutos repararAuto costoReparacionAuto (autos unEquipo) (presupuesto unEquipo)
+} 
+--1C
 optimizarAutos :: Equipo -> Equipo
 optimizarAutos unEquipo = unEquipo { 
-  autos = optimizarListaDeAutos (autos unEquipo) (presupuesto unEquipo), 
-  presupuesto = presupuestoFinalAplicandoElNitro (autos unEquipo) (presupuesto unEquipo)
+  autos = modificarListaDeAutos autoConNitro costoNitro (autos unEquipo) (presupuesto unEquipo), 
+  presupuesto = modificarPresupuestoDeAutos autoConNitro costoNitro (autos unEquipo) (presupuesto unEquipo)
 }
-
-optimizarListaDeAutos :: [Auto] -> Float -> [Auto]
-optimizarListaDeAutos [] _ = []
-optimizarListaDeAutos (primerAuto:restoDeLosAutos) presupuesto
-    | costoNitro primerAuto <= presupuesto = autoConNitro primerAuto : optimizarListaDeAutos restoDeLosAutos (presupuesto - costoNitro primerAuto)
-    | otherwise = primerAuto : restoDeLosAutos
-
-presupuestoFinalAplicandoElNitro :: [Auto] -> Float -> Float
-presupuestoFinalAplicandoElNitro [] presupuesto = presupuesto
-presupuestoFinalAplicandoElNitro (primerAuto:restoDeLosAutos) presupuesto
-    | costoNitro primerAuto <= presupuesto = presupuestoFinalAplicandoElNitro restoDeLosAutos (presupuesto - costoNitro primerAuto)
-    | otherwise = presupuesto
-
 --1D
-
-hacerFerrari :: Auto -> Auto
-hacerFerrari unAuto = (cambiarMarcaAFerrari.cambiarModeloAF50) unAuto
-
 ferrarizar :: Equipo -> Equipo
 ferrarizar unEquipo = unEquipo {
-  nombreEquipo = nombreEquipo unEquipo,
-  autos = ferrarizarAutos (autos unEquipo) (presupuesto unEquipo),
-  presupuesto = presupuestoFinal (autos unEquipo) (presupuesto unEquipo)
+  autos = modificarListaDeAutos hacerFerrari costoDeFerrarizarUnAuto (autos unEquipo) (presupuesto unEquipo),
+  presupuesto = modificarPresupuestoDeAutos hacerFerrari costoDeFerrarizarUnAuto (autos unEquipo) (presupuesto unEquipo)
 }
-
-ferrarizarAutos :: [Auto] -> Float -> [Auto]
-ferrarizarAutos [] _ = []
-ferrarizarAutos (primerAuto:restoDeLosAutos) presupuesto 
-  |esFerrari primerAuto = primerAuto : ferrarizarAutos restoDeLosAutos presupuesto
-  |presupuesto >= costoDeFerrarizarUnAuto primerAuto = hacerFerrari primerAuto : ferrarizarAutos restoDeLosAutos (presupuesto - costoDeFerrarizarUnAuto primerAuto)
-  |otherwise = primerAuto : ferrarizarAutos restoDeLosAutos presupuesto
-
-presupuestoFinal :: [Auto] -> Float -> Float
-presupuestoFinal [] presupuesto = presupuesto
-presupuestoFinal (primerAuto:restoDeLosAutos) presupuesto
-    | esFerrari primerAuto = presupuestoFinal restoDeLosAutos presupuesto
-    | presupuesto >= costoDeFerrarizarUnAuto primerAuto  = presupuestoFinal restoDeLosAutos (presupuesto - costoDeFerrarizarUnAuto primerAuto)
-    | otherwise = presupuestoFinal restoDeLosAutos presupuesto
 
 --Punto 2
 costoTotalDeReparacion :: Equipo -> Float
@@ -597,6 +561,31 @@ presupuesto y provocará que la función siga buscando infinitamente un auto par
 de reparacion de cada uno los de los autos del equipo infinia, como la suma de dichos costos. Ya que la lista es
 infinita, la funcion jamas lo conseguira-}
 
+-- Punto 4
+
+boxes :: Tramo -> Tramo
+boxes unTramo unAuto 
+  | (not . estaEnBuenEstadoUnAuto . unTramo) unAuto = (sumarTiempoDeCarrera 10 1 1 1 . repararAuto . unTramo) unAuto 
+  | otherwise = unTramo unAuto 
+
+mojado :: Tramo -> Tramo -- pide ORIGINALMENTE EL TRAMO, es decir si tengo 10 y le sumo 20 con el tramo, tengo 30, y debo obtener ese 20 para dps sumarle 50
+mojado unTramo unAuto = (sumarTiempoDeCarrera 0.5 (tiempoDeCarreraOriginalDe unTramo unAuto) 1 1 . unTramo) unAuto
+
+tiempoDeCarreraOriginalDe :: Tramo -> Auto -> Float
+tiempoDeCarreraOriginalDe unTramo unAuto = subtract (tiempoDeCarrera unAuto) . tiempoDeCarrera . unTramo $ unAuto
+
+ripio :: Tramo -> Tramo
+ripio unTramo unAuto = (sumarTiempoDeCarrera (tiempoDeCarreraOriginalDe unTramo unAuto) 1 1 1 . unTramo . unTramo) unAuto
+
+obstruccion :: Float -> Tramo -> Tramo
+obstruccion metros unTramo unAuto = (sumarDesgasteRuedas 2 metros 1 . unTramo) unAuto
+
+turbo :: Tramo -> Tramo
+turbo unTramo unAuto = actualizarVelocidadMaxima (const (velocidadMaxima unAuto)) . unTramo . actualizarVelocidadMaxima (*2) $ unAuto
+
+actualizarVelocidadMaxima :: (Float -> Float) -> Auto -> Auto
+actualizarVelocidadMaxima unaFuncion unAuto = unAuto {velocidadMaxima = (unaFuncion . velocidadMaxima) unAuto}
+
 --Punto 5
 
 pasarPorTramo2 :: Tramo -> Auto -> Auto
@@ -610,7 +599,7 @@ data Pista = UnaPista {
   pais :: String,
   precioDeEntrada :: Int,
   circuito :: [Tramo]
-}
+} deriving Show
 
 vueltaALaManzana :: Pista
 vueltaALaManzana = UnaPista {
@@ -627,6 +616,7 @@ circuitoVueltaALaManzana = concat.replicate 4 $ [tramoRecto 130, tramoCurva 90 1
 
 superPista :: Pista
 superPista = UnaPista {
+  nombre = "Super Pista",
   pais = "Argentina",
   precioDeEntrada = 300,
   circuito = 
@@ -653,3 +643,55 @@ UnAuto {marca = "Peugeot", modelo = "504", desgaste = (80.3,3.8999999), velocida
 
 Se cambió el valor de chasis de ruedas del peugeot para este caso de pueba (de 0 a 79).
 -}
+
+-- 7A
+
+data Carrera = UnaCarrera { 
+  pista :: Pista,
+  numeroDeVueltas :: Int
+} deriving Show
+
+-- 7B
+
+tourBuenosAires :: Carrera
+tourBuenosAires = UnaCarrera {
+   pista = superPista, 
+   numeroDeVueltas = 20
+}
+
+-- 7C
+
+simularCarrera :: Carrera -> [Auto] -> [[Auto]] -- Retorna una lista de listas de autos, siendo cada lista el resultado parcial de cada vuelta (puede ser que no muestre todas las vueltas si los autos no dan para mas).
+simularCarrera (UnaCarrera _ 0) autos = [autos]
+simularCarrera (UnaCarrera pista vueltas) [] = []
+simularCarrera (UnaCarrera pista vueltas) autos
+  | all noDaMas autos = [autos]
+  | otherwise = autos : simularCarrera (UnaCarrera pista (vueltas - 1)) (autosTrasUnaVuelta pista autos)
+
+autosTrasUnaVuelta :: Pista -> [Auto] -> [Auto]
+autosTrasUnaVuelta pista = map (pegaLaVuelta (circuito pista)) . filter (not . noDaMas)
+
+autoConMenorTiempo :: [Auto] -> Auto
+autoConMenorTiempo [auto] = auto
+autoConMenorTiempo (auto1:auto2:resto)
+  | (> tiempoDeCarrera auto1) . tiempoDeCarrera $ auto2 = autoConMenorTiempo (auto1 : resto)
+  | otherwise = autoConMenorTiempo (auto2 : resto)
+
+ganadorDeCarrera :: Carrera -> [Auto] -> Auto
+ganadorDeCarrera carrera = autoConMenorTiempo . last . simularCarrera carrera
+
+segundoAuto :: [Auto] -> Auto
+segundoAuto (_ : auto2 : _) = auto2
+segundoAuto autos = head autos
+
+tiempoTotalSegundoAuto :: Carrera -> [Auto] -> Float
+tiempoTotalSegundoAuto carrera autos = tiempoDeCarrera (segundoAuto (last (simularCarrera carrera autos)))
+
+primerAuto :: [Auto] -> Auto
+primerAuto (auto : _) = auto
+
+tiempoParcialTras2Vueltas :: Carrera -> [Auto] -> Float
+tiempoParcialTras2Vueltas carrera autos = tiempoDeCarrera (primerAuto (simularCarrera carrera autos !! (min 2 (length (simularCarrera carrera autos) - 1))))
+
+cantidadAutosQueTerminaron :: Carrera -> [Auto] -> Int
+cantidadAutosQueTerminaron carrera autos = length (filter (not . noDaMas) (last (simularCarrera carrera autos)))
