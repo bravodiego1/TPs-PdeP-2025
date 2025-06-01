@@ -516,7 +516,6 @@ presupuestoFinalAplicandoElNitro (primerAuto:restoDeLosAutos) presupuesto
 
 --1D
 
-
 hacerFerrari :: Auto -> Auto
 hacerFerrari unAuto = (cambiarMarcaAFerrari.cambiarModeloAF50) unAuto
 
@@ -581,7 +580,7 @@ ferrariInfinia n = actualizarDesgasteChasis (const 1) . actualizarVelocidadMaxim
 
 --i. 
 {-Se cuelga, porque los infinitos autos del equipo infinia tienen un desgaste de chasis igual a 1 
-y no puede reducirse más allá de eso, con lo cual no hay ningún auto para reparar y por ese motivo 
+y no puede reducirse más, con lo cual no hay ningún auto para reparar y por ese motivo 
 el presupuesto nunca se agota, que es lo que la función necesita para dejar de iterar-}
 
 --ii. 
