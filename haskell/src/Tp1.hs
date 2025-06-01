@@ -602,7 +602,7 @@ data Pista = UnaPista {
   pais :: String,
   precioDeEntrada :: Int,
   circuito :: [Tramo]
-} 
+} deriving Show
 
 vueltaALaManzana :: Pista
 vueltaALaManzana = UnaPista {
@@ -619,6 +619,7 @@ circuitoVueltaALaManzana = concat.replicate 4 $ [tramoRecto 130, tramoCurva 90 1
 
 superPista :: Pista
 superPista = UnaPista {
+  nombre = "Super Pista",
   pais = "Argentina",
   precioDeEntrada = 300,
   circuito = 
@@ -645,3 +646,55 @@ UnAuto {marca = "Peugeot", modelo = "504", desgaste = (80.3,3.8999999), velocida
 
 Se cambió el valor de chasis de ruedas del peugeot para este caso de pueba (de 0 a 79).
 -}
+
+-- 7A
+
+data Carrera = UnaCarrera { 
+  pista :: Pista,
+  numeroDeVueltas :: Int
+} deriving Show
+
+-- 7B
+
+tourBuenosAires :: Carrera
+tourBuenosAires = UnaCarrera {
+   pista = superPista, 
+   numeroDeVueltas = 20
+}
+
+-- 7C
+
+simularCarrera :: Carrera -> [Auto] -> [[Auto]] -- Retorna una lista de listas de autos, siendo cada lista el resultado parcial de cada vuelta (puede ser que no muestre todas las vueltas si los autos no dan para mas).
+simularCarrera (UnaCarrera _ 0) autos = [autos]
+simularCarrera (UnaCarrera pista vueltas) [] = []
+simularCarrera (UnaCarrera pista vueltas) autos
+  | all noDaMas autos = [autos]
+  | otherwise = autos : simularCarrera (UnaCarrera pista (vueltas - 1)) (autosTrasUnaVuelta pista autos)
+
+autosTrasUnaVuelta :: Pista -> [Auto] -> [Auto]
+autosTrasUnaVuelta pista = map (pegaLaVuelta (circuito pista)) . filter (not . noDaMas)
+
+autoConMenorTiempo :: [Auto] -> Auto
+autoConMenorTiempo [auto] = auto
+autoConMenorTiempo (auto1:auto2:resto)
+  | (> tiempoDeCarrera auto1) . tiempoDeCarrera $ auto2 = autoConMenorTiempo (auto1 : resto)
+  | otherwise = autoConMenorTiempo (auto2 : resto)
+
+ganadorDeCarrera :: Carrera -> [Auto] -> Auto
+ganadorDeCarrera carrera = autoConMenorTiempo . last . simularCarrera carrera
+
+segundoAuto :: [Auto] -> Auto
+segundoAuto (_ : auto2 : _) = auto2
+segundoAuto autos = head autos
+
+tiempoTotalSegundoAuto :: Carrera -> [Auto] -> Float
+tiempoTotalSegundoAuto carrera autos = tiempoDeCarrera (segundoAuto (last (simularCarrera carrera autos)))
+
+primerAuto :: [Auto] -> Auto
+primerAuto (auto : _) = auto
+
+tiempoParcialTras2Vueltas :: Carrera -> [Auto] -> Float
+tiempoParcialTras2Vueltas carrera autos = tiempoDeCarrera (primerAuto (simularCarrera carrera autos !! (min 2 (length (simularCarrera carrera autos) - 1))))
+
+cantidadAutosQueTerminaron :: Carrera -> [Auto] -> Int
+cantidadAutosQueTerminaron carrera autos = length (filter (not . noDaMas) (last (simularCarrera carrera autos)))
