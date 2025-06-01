@@ -433,11 +433,6 @@ modificarAutosDeEquipo modificacion unEquipo = unEquipo {autos = (modificacion.a
 modificarPresupuesto :: (Float -> Float) -> Equipo -> Equipo
 modificarPresupuesto modificacion unEquipo = unEquipo {presupuesto = (modificacion.presupuesto) unEquipo}
 
-precioAuto :: Auto -> Float
-precioAuto unAuto = velocidadMaxima unAuto * 1000
-
-comprarAuto :: Auto -> Equipo -> Equipo
-comprarAuto unAuto unEquipo= (modificarAutosDeEquipo ((:) unAuto) . modificarPresupuesto (subtract (precioAuto unAuto))) unEquipo
 
 costoDeFerrarizarUnAuto :: Auto -> Float
 costoDeFerrarizarUnAuto unAuto
@@ -456,8 +451,20 @@ esFerrari unAuto = (== "Ferrari").marca $ unAuto
 costoPorPonerNitro :: Float
 costoPorPonerNitro = 100
 
+costoPorRepararAuto :: Float
+costoPorRepararAuto = 500
+
 costoNitro :: Auto -> Float
 costoNitro unAuto = (velocidadMaxima unAuto) * costoPorPonerNitro
+
+costoReparacionAuto :: Auto -> Float
+costoReparacionAuto unAuto = (chasis unAuto) * 0.85 * costoPorRepararAuto
+
+reduccionChasis :: [Auto] -> Float
+reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85 
+
+hacerFerrari :: Auto -> Auto
+hacerFerrari unAuto = (cambiarMarcaAFerrari.cambiarModeloAF50) unAuto
 
 --EQUIPO
 
@@ -472,88 +479,58 @@ data Equipo = UnEquipo{
 grupo8 :: Equipo
 grupo8 = UnEquipo{
     nombreEquipo = "Grupo 8",
-    autos = [fiat],
+    autos = [ferrari,lamborghini],
     presupuesto = 10000
 } 
 
 -- 1A
+
+precioAuto :: Auto -> Float
+precioAuto unAuto = velocidadMaxima unAuto * 1000
+
+comprarAuto :: Auto -> Equipo -> Equipo
+comprarAuto unAuto unEquipo= (modificarAutosDeEquipo ((:) unAuto) . modificarPresupuesto (subtract (precioAuto unAuto))) unEquipo
 
 agregarAutoAEquipo :: Auto -> Equipo -> Equipo
 agregarAutoAEquipo unAuto unEquipo 
   |precioAuto unAuto <= presupuesto unEquipo = comprarAuto unAuto unEquipo
   |otherwise = unEquipo
 
--- 1B
-reduccionChasis :: [Auto] -> Float
-reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85 
+--Funciones a utilizar en 1B/1C/1D
+type Presupuesto = Float
 
-costoReparacionAuto :: Auto -> Float
-costoReparacionAuto unAuto = (chasis unAuto) * 0.85 * 500
-
-repararAutosDeEquipo :: Equipo -> Equipo
-repararAutosDeEquipo unEquipo = unEquipo{
-  autos = repararListaDeAutos (autos unEquipo) (presupuesto unEquipo),
-  presupuesto = presupuestoFinalAlRepararAutos (autos unEquipo) (presupuesto unEquipo)
-} 
-
-presupuestoFinalAlRepararAutos :: [Auto] -> Float -> Float
-presupuestoFinalAlRepararAutos [] presupuesto = presupuesto
-presupuestoFinalAlRepararAutos (primerAuto:restoDeLosAutos) presupuesto
-  |costoReparacionAuto primerAuto  <= presupuesto = presupuestoFinalAlRepararAutos restoDeLosAutos (presupuesto - costoReparacionAuto primerAuto) 
-  |otherwise = presupuesto
-  
-repararListaDeAutos :: [Auto] -> Float -> [Auto]
-repararListaDeAutos [] _ = []
-repararListaDeAutos (primerAuto: restoDeLosAutos) presupuesto 
-  |costoReparacionAuto primerAuto <= presupuesto = repararAuto primerAuto : optimizarListaDeAutos restoDeLosAutos (presupuesto - costoReparacionAuto primerAuto)
+modificarListaDeAutos :: (Auto -> Auto) -> (Auto -> Float)-> [Auto] -> Presupuesto -> [Auto]
+modificarListaDeAutos _ _ [] _ = []
+modificarListaDeAutos modificacionDeAuto costoAMandar (primerAuto:restoDeLosAutos) presupuesto
+  |modificacionDeAuto primerAuto == hacerFerrari primerAuto && esFerrari primerAuto = primerAuto : modificarListaDeAutos (hacerFerrari) costoAMandar restoDeLosAutos presupuesto
+  |costoAMandar primerAuto <= presupuesto = modificacionDeAuto primerAuto : modificarListaDeAutos modificacionDeAuto costoAMandar restoDeLosAutos (presupuesto - costoAMandar primerAuto)
   |otherwise = primerAuto : restoDeLosAutos
 
--- 1C
+modificarPresupuestoDeAutos :: (Auto -> Auto) -> (Auto -> Float) -> [Auto] -> Presupuesto -> Presupuesto
+modificarPresupuestoDeAutos _ _ [] presupuesto = presupuesto
+modificarPresupuestoDeAutos modificacionDeAuto costoAMandar (primerAuto:restoDeLosAutos) presupuesto
+  |modificacionDeAuto primerAuto == hacerFerrari primerAuto && esFerrari primerAuto = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos presupuesto
+  |costoAMandar primerAuto  <= presupuesto = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos (presupuesto - costoAMandar primerAuto) 
+  |otherwise = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos presupuesto
 
-optimizarListaDeAutos :: [Auto] -> Float -> [Auto]
-optimizarListaDeAutos [] _ = []
-optimizarListaDeAutos (primerAuto:restoDeLosAutos) presupuesto
-    | costoNitro primerAuto <= presupuesto = autoConNitro primerAuto : optimizarListaDeAutos restoDeLosAutos (presupuesto - costoNitro primerAuto)
-    | otherwise = primerAuto : restoDeLosAutos
-
-presupuestoFinalAplicandoElNitro :: [Auto] -> Float -> Float
-presupuestoFinalAplicandoElNitro [] presupuesto = presupuesto
-presupuestoFinalAplicandoElNitro (primerAuto:restoDeLosAutos) presupuesto
-    | costoNitro primerAuto <= presupuesto = presupuestoFinalAplicandoElNitro restoDeLosAutos (presupuesto - costoNitro primerAuto)
-    | otherwise = presupuesto
-
+--1B
+repararAutosDeEquipo :: Equipo -> Equipo
+repararAutosDeEquipo unEquipo = unEquipo{
+  autos = modificarListaDeAutos repararAuto costoReparacionAuto (autos unEquipo) (presupuesto unEquipo),
+  presupuesto = modificarPresupuestoDeAutos repararAuto costoReparacionAuto (autos unEquipo) (presupuesto unEquipo)
+} 
+--1C
 optimizarAutos :: Equipo -> Equipo
 optimizarAutos unEquipo = unEquipo { 
-  autos = optimizarListaDeAutos (autos unEquipo) (presupuesto unEquipo), 
-  presupuesto = presupuestoFinalAplicandoElNitro (autos unEquipo) (presupuesto unEquipo)
+  autos = modificarListaDeAutos autoConNitro costoNitro (autos unEquipo) (presupuesto unEquipo), 
+  presupuesto = modificarPresupuestoDeAutos autoConNitro costoNitro (autos unEquipo) (presupuesto unEquipo)
 }
-
-
 --1D
-
-hacerFerrari :: Auto -> Auto
-hacerFerrari unAuto = (cambiarMarcaAFerrari.cambiarModeloAF50) unAuto
-
 ferrarizar :: Equipo -> Equipo
 ferrarizar unEquipo = unEquipo {
-  nombreEquipo = nombreEquipo unEquipo,
-  autos = ferrarizarAutos (autos unEquipo) (presupuesto unEquipo),
-  presupuesto = presupuestoFinal (autos unEquipo) (presupuesto unEquipo)
+  autos = modificarListaDeAutos hacerFerrari costoDeFerrarizarUnAuto (autos unEquipo) (presupuesto unEquipo),
+  presupuesto = modificarPresupuestoDeAutos hacerFerrari costoDeFerrarizarUnAuto (autos unEquipo) (presupuesto unEquipo)
 }
-
-ferrarizarAutos :: [Auto] -> Float -> [Auto]
-ferrarizarAutos [] _ = []
-ferrarizarAutos (primerAuto:restoDeLosAutos) presupuesto 
-  |esFerrari primerAuto = primerAuto : ferrarizarAutos restoDeLosAutos presupuesto
-  |presupuesto >= costoDeFerrarizarUnAuto primerAuto = hacerFerrari primerAuto : ferrarizarAutos restoDeLosAutos (presupuesto - costoDeFerrarizarUnAuto primerAuto)
-  |otherwise = primerAuto : ferrarizarAutos restoDeLosAutos presupuesto
-
-presupuestoFinal :: [Auto] -> Float -> Float
-presupuestoFinal [] presupuesto = presupuesto
-presupuestoFinal (primerAuto:restoDeLosAutos) presupuesto
-    | esFerrari primerAuto = presupuestoFinal restoDeLosAutos presupuesto
-    | presupuesto >= costoDeFerrarizarUnAuto primerAuto  = presupuestoFinal restoDeLosAutos (presupuesto - costoDeFerrarizarUnAuto primerAuto)
-    | otherwise = presupuestoFinal restoDeLosAutos presupuesto
 
 --Punto 2
 costoTotalDeReparacion :: Equipo -> Float
