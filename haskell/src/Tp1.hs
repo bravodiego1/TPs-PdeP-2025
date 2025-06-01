@@ -578,24 +578,24 @@ ferrariInfinia n = actualizarDesgasteChasis (const 1) . actualizarVelocidadMaxim
 
 --Punto 3b) 
 
---i. 
-{-Se cuelga, porque los infinitos autos del equipo infinia tienen un desgaste de chasis igual a 1 
-y no puede reducirse más, con lo cual no hay ningún auto para reparar y por ese motivo 
-el presupuesto nunca se agota, que es lo que la función necesita para dejar de iterar-}
+--i)
+{-Se cuelga, porque los infinitos autos del equipo infinia tienen todos un desgaste de chasis igual a 1 
+que no puede reducirse más, con lo cual no hay ningún auto para reparar y por ese motivo 
+el presupuesto nunca se agota, que es justamente lo que la función necesita para dejar de iterar-}
 
---ii. 
-{-Devuelve un equipo infinia con una lista vacía de autos porque el costo de ponerle nitro a un  
-auto del equipo infinia, el primer auto, es superior al del presupuesto-}
+--ii) 
+{-Devuelve un equipo infinia con una lista vacía de autos porque el costo de ponerle nitro al primer 
+auto del equipo infinia es superior al del presupuesto-}
 
---iii. 
-{-Se cuelga. Todos los autos del equipo infinia son de marca Ferrari y modelo F50, por lo que 
-la función ferrarizar no podrá convertir ninguno de los autos, lo que no disminuira el 
+--iii)
+{-Se cuelga. Como todos los autos del equipo infinia son de marca Ferrari y modelo F50,
+la función ferrarizar no podrá convertir a ninguno de ellos, lo que no disminuira el 
 presupuesto y provocará que la función siga buscando infinitamente un auto para convertir-}
 
---iv. 
-{-Se cuelga. Porque la lista debe ser recorrida en su enteridad para realizar tanto la suma total como 
-el calculo del costo de reparacion de cada uno los de los autos del equipo infinia. Ya que la lista es
-infinita, la funcion jamas lo conseguira -}
+--iv)
+{-Se cuelga. Porque la lista debe ser recorrida en su enteridad para realizar tanto el calculo del costo 
+de reparacion de cada uno los de los autos del equipo infinia, como la suma de dichos costos. Ya que la lista es
+infinita, la funcion jamas lo conseguira-}
 
 --Punto 5
 
@@ -627,10 +627,10 @@ circuitoVueltaALaManzana = concat.replicate 4 $ [tramoRecto 130, tramoCurva 90 1
 
 superPista :: Pista
 superPista = UnaPista {
-pais = "Argentina",
-precioDeEntrada = 300,
-circuito = 
-  [tramoRectoClassic, curvaTranca, turbo tramito, mojado tramito, tramoRuloEnElAire 10, obstruccion 2 (tramoCurva 80 400), tramoCurva 115 650, tramoRecto 970, curvaPeligrosa, ripio tramito, boxes (tramoRecto 800), obstruccion 5 casiCurva, tramoZigzag 2, mojado.ripio $ deseoDeMuerte, ruloClasico, zigZagLoco]
+  pais = "Argentina",
+  precioDeEntrada = 300,
+  circuito = 
+    [tramoRectoClassic, curvaTranca, turbo tramito, mojado tramito, tramoRuloEnElAire 10, obstruccion 2 (tramoCurva 80 400), tramoCurva 115 650, tramoRecto 970, curvaPeligrosa, ripio tramito, boxes (tramoRecto 800), obstruccion 5 casiCurva, tramoZigzag 2, mojado.ripio $ deseoDeMuerte, ruloClasico, zigZagLoco]
 }
 
 peganLaVuelta :: Pista -> [Auto] -> [Auto]
