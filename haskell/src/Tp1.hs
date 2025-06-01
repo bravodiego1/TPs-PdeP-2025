@@ -590,8 +590,8 @@ actualizarVelocidadMaxima unaFuncion unAuto = unAuto {velocidadMaxima = (unaFunc
 
 --Punto 5
 
-pasarPorTramo2 :: Tramo -> Auto -> Auto
-pasarPorTramo2 unTramo unAuto 
+pasarPorTramo2 :: Auto -> Tramo -> Auto
+pasarPorTramo2 unAuto unTramo
   | not (noDaMas unAuto) = unTramo unAuto 
   | otherwise = id unAuto
 
@@ -625,21 +625,16 @@ superPista = UnaPista {
     [tramoRectoClassic, curvaTranca, turbo tramito, mojado tramito, tramoRuloEnElAire 10, obstruccion 2 (tramoCurva 80 400), tramoCurva 115 650, tramoRecto 970, curvaPeligrosa, ripio tramito, boxes (tramoRecto 800), obstruccion 5 casiCurva, tramoZigzag 2, mojado.ripio $ deseoDeMuerte, ruloClasico, zigZagLoco]
 }
 
-peganLaVuelta :: Pista -> [Auto] -> [Auto]
-peganLaVuelta unaPista unaListaDeAutos = map (pegaLaVuelta (circuito unaPista)) unaListaDeAutos
+peganLaVuelta2 :: Pista -> [Auto] -> [Auto]
+peganLaVuelta2 unaPista unaListaDeAutos = map (pegaLaVuelta (circuito unaPista)) unaListaDeAutos
 
 pegaLaVuelta :: [Tramo] -> Auto -> Auto
-pegaLaVuelta unCircuito unAuto = foldl recorre unAuto unCircuito
+pegaLaVuelta unCircuito unAuto = foldl pasarPorTramo2 unAuto unCircuito
 --foldr empezaba por el último tramo, y cuando estaba recorriendo "manualmente" lo hacía desde el primero al último, de izquierda a derecha
-
-recorre :: Auto -> Tramo -> Auto
-recorre unAuto unTramo
-  | not.noDaMas $ unAuto = unTramo unAuto
-  | otherwise = unAuto
 
 {-
 CASO DE PRUEBA 6:
-> peganLaVuelta vueltaALaManzana [ferrari,peugeot]
+> peganLaVuelta2 vueltaALaManzana [ferrari,peugeot]
 [UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (1.7333333,15.200001), velocidadMaxima = 65.0, tiempoDeCarrera = 9.6, apodos = ["La nave","El fierro","Ferrucho"]},
 UnAuto {marca = "Peugeot", modelo = "504", desgaste = (80.3,3.8999999), velocidadMaxima = 40.0, tiempoDeCarrera = 11.7, apodos = ["El rey del desierto"]}]
 
