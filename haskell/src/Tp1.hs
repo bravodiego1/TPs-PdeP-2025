@@ -39,7 +39,7 @@ fiat :: Auto
 fiat = UnAuto {
     marca = "Fiat",
     modelo = "600",
-    desgaste = (27, 33),
+    desgaste = (27, 50),
     velocidadMaxima = 44,
     tiempoDeCarrera = 0 ,
     apodos = ["La Bocha", "La bolita", "Fitito"]
@@ -472,9 +472,9 @@ data Equipo = UnEquipo{
 grupo8 :: Equipo
 grupo8 = UnEquipo{
     nombreEquipo = "Grupo 8",
-    autos = [ferrari,lamborghini],
-    presupuesto = 20000
-}
+    autos = [fiat],
+    presupuesto = 10000
+} 
 
 -- 1A
 
@@ -484,23 +484,31 @@ agregarAutoAEquipo unAuto unEquipo
   |otherwise = unEquipo
 
 -- 1B
-
 reduccionChasis :: [Auto] -> Float
 reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85 
 
+costoReparacionAuto :: Auto -> Float
+costoReparacionAuto unAuto = (chasis unAuto) * 0.85 * 500
+
 repararAutosDeEquipo :: Equipo -> Equipo
-repararAutosDeEquipo unEquipo 
-    |(costoTotalDeReparacion unEquipo) < presupuesto unEquipo = (modificarAutosDeEquipo (map repararAuto) . modificarPresupuesto (subtract (costoTotalDeReparacion unEquipo))) unEquipo
-    |otherwise = unEquipo
+repararAutosDeEquipo unEquipo = unEquipo{
+  autos = repararListaDeAutos (autos unEquipo) (presupuesto unEquipo),
+  presupuesto = presupuestoFinalAlRepararAutos (autos unEquipo) (presupuesto unEquipo)
+} 
+
+presupuestoFinalAlRepararAutos :: [Auto] -> Float -> Float
+presupuestoFinalAlRepararAutos [] presupuesto = presupuesto
+presupuestoFinalAlRepararAutos (primerAuto:restoDeLosAutos) presupuesto
+  |costoReparacionAuto primerAuto  <= presupuesto = presupuestoFinalAlRepararAutos restoDeLosAutos (presupuesto - costoReparacionAuto primerAuto) 
+  |otherwise = presupuesto
+  
+repararListaDeAutos :: [Auto] -> Float -> [Auto]
+repararListaDeAutos [] _ = []
+repararListaDeAutos (primerAuto: restoDeLosAutos) presupuesto 
+  |costoReparacionAuto primerAuto <= presupuesto = repararAuto primerAuto : optimizarListaDeAutos restoDeLosAutos (presupuesto - costoReparacionAuto primerAuto)
+  |otherwise = primerAuto : restoDeLosAutos
 
 -- 1C
-
-
-optimizarAutos :: Equipo -> Equipo
-optimizarAutos unEquipo = unEquipo { 
-  autos = optimizarListaDeAutos (autos unEquipo) (presupuesto unEquipo), 
-  presupuesto = presupuestoFinalAplicandoElNitro (autos unEquipo) (presupuesto unEquipo)
-}
 
 optimizarListaDeAutos :: [Auto] -> Float -> [Auto]
 optimizarListaDeAutos [] _ = []
@@ -513,6 +521,13 @@ presupuestoFinalAplicandoElNitro [] presupuesto = presupuesto
 presupuestoFinalAplicandoElNitro (primerAuto:restoDeLosAutos) presupuesto
     | costoNitro primerAuto <= presupuesto = presupuestoFinalAplicandoElNitro restoDeLosAutos (presupuesto - costoNitro primerAuto)
     | otherwise = presupuesto
+
+optimizarAutos :: Equipo -> Equipo
+optimizarAutos unEquipo = unEquipo { 
+  autos = optimizarListaDeAutos (autos unEquipo) (presupuesto unEquipo), 
+  presupuesto = presupuestoFinalAplicandoElNitro (autos unEquipo) (presupuesto unEquipo)
+}
+
 
 --1D
 
@@ -610,7 +625,7 @@ data Pista = UnaPista {
   pais :: String,
   precioDeEntrada :: Int,
   circuito :: [Tramo]
-}
+} 
 
 vueltaALaManzana :: Pista
 vueltaALaManzana = UnaPista {
