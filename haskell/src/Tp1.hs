@@ -564,21 +564,24 @@ lista es infinita, la funcion jamas lo conseguira-}
 -- Punto 4
 
 boxes :: Tramo -> Tramo
-boxes unTramo unAuto 
-  | (not . estaEnBuenEstadoUnAuto . unTramo) unAuto = (sumarTiempoDeCarrera 10 1 1 1 . repararAuto . unTramo) unAuto 
-  | otherwise = unTramo unAuto 
+boxes unTramo unAuto
+  | (not . estaEnBuenEstadoUnAuto . unTramo) unAuto = (actualizarTiempoDeCarrera (+10) . repararAuto . unTramo) unAuto
+  | otherwise = unTramo unAuto
 
 mojado :: Tramo -> Tramo -- pide ORIGINALMENTE EL TRAMO, es decir si tengo 10 y le sumo 20 con el tramo, tengo 30, y debo obtener ese 20 para dps sumarle 50
-mojado unTramo unAuto = (sumarTiempoDeCarrera 0.5 (tiempoDeCarreraOriginalDe unTramo unAuto) 1 1 . unTramo) unAuto
+mojado unTramo unAuto = (agregarMitadDeTiempoDe unTramo . unTramo) unAuto
+
+agregarMitadDeTiempoDe :: Tramo -> Auto -> Auto
+agregarMitadDeTiempoDe unTramo unAuto = (sumarTiempoDeCarrera 0.5 (tiempoDeCarreraOriginalDe unTramo unAuto) 1 1) unAuto
 
 tiempoDeCarreraOriginalDe :: Tramo -> Auto -> Float
 tiempoDeCarreraOriginalDe unTramo unAuto = subtract (tiempoDeCarrera unAuto) . tiempoDeCarrera . unTramo $ unAuto
 
 ripio :: Tramo -> Tramo
-ripio unTramo unAuto = (sumarTiempoDeCarrera (tiempoDeCarreraOriginalDe unTramo unAuto) 1 1 1 . unTramo . unTramo) unAuto
+ripio unTramo unAuto = (actualizarTiempoDeCarrera (+ tiempoDeCarreraOriginalDe unTramo unAuto) . unTramo . unTramo) unAuto
 
 obstruccion :: Float -> Tramo -> Tramo
-obstruccion metros unTramo unAuto = (sumarDesgasteRuedas 2 metros 1 . unTramo) unAuto
+obstruccion metros unTramo unAuto = (actualizarDesgasteRuedas (+ 2*metros) . unTramo) unAuto
 
 turbo :: Tramo -> Tramo
 turbo unTramo unAuto = actualizarVelocidadMaxima (const (velocidadMaxima unAuto)) . unTramo . actualizarVelocidadMaxima (*2) $ unAuto
