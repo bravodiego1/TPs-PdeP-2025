@@ -411,12 +411,6 @@ costoDeFerrarizarUnAuto unAuto
   |marca unAuto == "Ferrari" = 0
   |otherwise = 3500
 
-cambiarMarcaAFerrari :: Auto -> Auto
-cambiarMarcaAFerrari unAuto = unAuto {marca = "Ferrari"}
-
-cambiarModeloAF50 :: Auto -> Auto
-cambiarModeloAF50 unAuto = unAuto {modelo = "F50"}
-
 esFerrari :: Auto -> Bool
 esFerrari unAuto = (== "Ferrari").marca $ unAuto   
 
@@ -436,7 +430,10 @@ reduccionChasis :: [Auto] -> Float
 reduccionChasis unosAutos = (sum.map(chasis) $ unosAutos) * 0.85 
 
 hacerFerrari :: Auto -> Auto
-hacerFerrari unAuto = (cambiarMarcaAFerrari.cambiarModeloAF50) unAuto
+hacerFerrari unAuto = cambiarMarcaFerrariYModeloF50 unAuto
+
+cambiarMarcaFerrariYModeloF50 :: Auto -> Auto
+cambiarMarcaFerrariYModeloF50 unAuto = unAuto {marca = "Ferrari", modelo = "F50"}
 
 --EQUIPO
 
@@ -491,6 +488,7 @@ repararAutosDeEquipo unEquipo = unEquipo{
   autos = modificarListaDeAutos repararAuto costoReparacionAuto (autos unEquipo) (presupuesto unEquipo),
   presupuesto = modificarPresupuestoDeAutos repararAuto costoReparacionAuto (autos unEquipo) (presupuesto unEquipo)
 } 
+
 --1C
 optimizarAutos :: Equipo -> Equipo
 optimizarAutos unEquipo = unEquipo { 
