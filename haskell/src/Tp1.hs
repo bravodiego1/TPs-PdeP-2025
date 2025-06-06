@@ -591,7 +591,7 @@ actualizarVelocidadMaxima unaFuncion unAuto = unAuto {velocidadMaxima = (unaFunc
 pasarPorTramo2 :: Auto -> Tramo -> Auto
 pasarPorTramo2 unAuto unTramo
   | not (noDaMas unAuto) = unTramo unAuto 
-  | otherwise = id unAuto
+  | otherwise = unAuto
 
 --Punto 6
 data Pista = UnaPista {
