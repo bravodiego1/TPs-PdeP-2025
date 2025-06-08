@@ -626,16 +626,16 @@ superPista = UnaPista {
     [tramoRectoClassic, curvaTranca, turbo tramito, mojado tramito, tramoRuloEnElAire 10, obstruccion 2 (tramoCurva 80 400), tramoCurva 115 650, tramoRecto 970, curvaPeligrosa, ripio tramito, boxes (tramoRecto 800), obstruccion 5 casiCurva, tramoZigzag 2, mojado.ripio $ deseoDeMuerte, ruloClasico, zigZagLoco]
 }
 
-peganLaVuelta2 :: Pista -> [Auto] -> [Auto]
-peganLaVuelta2 unaPista unaListaDeAutos = map (pegaLaVuelta (circuito unaPista)) unaListaDeAutos
+peganLaVuelta :: Pista -> [Auto] -> [Auto]
+peganLaVuelta unaPista unaListaDeAutos = map (darLaVuelta (circuito unaPista)) unaListaDeAutos
 
-pegaLaVuelta :: [Tramo] -> Auto -> Auto
-pegaLaVuelta unCircuito unAuto = foldl pasarPorTramo2 unAuto unCircuito
+darLaVuelta :: [Tramo] -> Auto -> Auto
+darLaVuelta unCircuito unAuto = foldl pasarPorTramo2 unAuto unCircuito
 --foldr empezaba por el último tramo, y cuando estaba recorriendo "manualmente" lo hacía desde el primero al último, de izquierda a derecha
 
 {-
 CASO DE PRUEBA 6:
-> peganLaVuelta2 vueltaALaManzana [ferrari,peugeot]
+> peganLaVuelta vueltaALaManzana [ferrari,peugeot]
 [UnAuto {marca = "Ferrari", modelo = "F50", desgaste = (1.7333333,15.200001), velocidadMaxima = 65.0, tiempoDeCarrera = 9.6, apodos = ["La nave","El fierro","Ferrucho"]},
 UnAuto {marca = "Peugeot", modelo = "504", desgaste = (80.3,3.8999999), velocidadMaxima = 40.0, tiempoDeCarrera = 11.7, apodos = ["El rey del desierto"]}]
 
@@ -667,7 +667,7 @@ simularCarrera (UnaCarrera pista vueltas) autos
   | otherwise = autos : simularCarrera (UnaCarrera pista (vueltas - 1)) (autosTrasUnaVuelta pista autos)
 
 autosTrasUnaVuelta :: Pista -> [Auto] -> [Auto]
-autosTrasUnaVuelta pista = map (pegaLaVuelta (circuito pista)) . filter (not . noDaMas)
+autosTrasUnaVuelta pista = map (darLaVuelta (circuito pista)) . filter (not . noDaMas)
 
 autoConMenorTiempo :: [Auto] -> Auto
 autoConMenorTiempo [auto] = auto
