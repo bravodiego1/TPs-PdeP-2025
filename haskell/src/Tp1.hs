@@ -411,8 +411,7 @@ costoDeFerrarizarUnAuto unAuto
   |marca unAuto == "Ferrari" = 0
   |otherwise = 3500
 
-esFerrari :: Auto -> Bool
-esFerrari unAuto = (== "Ferrari").marca $ unAuto   
+
 
 costoPorPonerNitro :: Float
 costoPorPonerNitro = 100
@@ -434,6 +433,15 @@ hacerFerrari unAuto = cambiarMarcaFerrariYModeloF50 unAuto
 
 cambiarMarcaFerrariYModeloF50 :: Auto -> Auto
 cambiarMarcaFerrariYModeloF50 unAuto = unAuto {marca = "Ferrari", modelo = "F50"}
+
+es :: String -> Auto -> Bool
+es marcaEnviada auto = marca auto == marcaEnviada
+
+esMenorEntre :: Float -> Float -> Bool
+esMenorEntre costo presupuesto = costo <= presupuesto
+
+laModificacionEnviadaEs :: (Auto -> Auto) -> Auto -> (Auto -> Auto) -> Bool
+laModificacionEnviadaEs modificacionDeAuto auto funcion = modificacionDeAuto auto == funcion auto
 
 --EQUIPO
 
@@ -471,15 +479,15 @@ type Presupuesto = Float
 modificarListaDeAutos :: (Auto -> Auto) -> (Auto -> Float)-> [Auto] -> Presupuesto -> [Auto]
 modificarListaDeAutos _ _ [] _ = []
 modificarListaDeAutos modificacionDeAuto costoAMandar (primerAuto:restoDeLosAutos) presupuesto
-  |modificacionDeAuto primerAuto == hacerFerrari primerAuto && esFerrari primerAuto = primerAuto : modificarListaDeAutos (hacerFerrari) costoAMandar restoDeLosAutos presupuesto
-  |costoAMandar primerAuto <= presupuesto = modificacionDeAuto primerAuto : modificarListaDeAutos modificacionDeAuto costoAMandar restoDeLosAutos (presupuesto - costoAMandar primerAuto)
+  |laModificacionEnviadaEs modificacionDeAuto primerAuto hacerFerrari && es "Ferrari" primerAuto = primerAuto : modificarListaDeAutos (hacerFerrari) costoAMandar restoDeLosAutos presupuesto
+  |esMenorEntre (costoAMandar primerAuto) presupuesto  = modificacionDeAuto primerAuto : modificarListaDeAutos modificacionDeAuto costoAMandar restoDeLosAutos (presupuesto - costoAMandar primerAuto)
   |otherwise = primerAuto : restoDeLosAutos
 
 modificarPresupuestoDeAutos :: (Auto -> Auto) -> (Auto -> Float) -> [Auto] -> Presupuesto -> Presupuesto
 modificarPresupuestoDeAutos _ _ [] presupuesto = presupuesto
 modificarPresupuestoDeAutos modificacionDeAuto costoAMandar (primerAuto:restoDeLosAutos) presupuesto
-  |modificacionDeAuto primerAuto == hacerFerrari primerAuto && esFerrari primerAuto = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos presupuesto
-  |costoAMandar primerAuto  <= presupuesto = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos (presupuesto - costoAMandar primerAuto) 
+  |laModificacionEnviadaEs modificacionDeAuto primerAuto hacerFerrari && es "Ferrari" primerAuto = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos presupuesto
+  |esMenorEntre (costoAMandar primerAuto) presupuesto = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos (presupuesto - costoAMandar primerAuto) 
   |otherwise = modificarPresupuestoDeAutos modificacionDeAuto costoAMandar restoDeLosAutos presupuesto
 
 --1B
