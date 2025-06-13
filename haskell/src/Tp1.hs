@@ -319,7 +319,7 @@ tramoRecto :: Float -> Tramo
 tramoRecto unaLongitud unAuto = (actualizarDesgasteChasis (+ calcularDesgaste unaLongitud 1 100) . sumarTiempoDeCarrera 1 unaLongitud (velocidadMaxima unAuto) 1) unAuto
 
 tramoZigzag :: Float -> Tramo
-tramoZigzag cambiosDeDireccion unAuto = (sumarDesgasteRuedas cambiosDeDireccion (velocidadMaxima unAuto) 10 . desgasteDeChasisIgual 5 . sumarTiempoDeCarrera cambiosDeDireccion 3 1 1) unAuto
+tramoZigzag cambiosDeDireccion unAuto = (sumarDesgasteRuedas cambiosDeDireccion (velocidadMaxima unAuto) 10 . actualizarDesgasteChasis (const 5) . sumarTiempoDeCarrera cambiosDeDireccion 3 1 1) unAuto
 --unAuto {desgaste = (ruedas unAuto + calcularDesgaste (velocidadMaxima unAuto) cambiosDeDireccion (fromIntegral (10)), 5), tiempoDeCarrera = tiempoDeCarrera unAuto + calcularTiempoAgregado cambiosDeDireccion (fromIntegral (3)) (fromIntegral (1)) (fromIntegral (1))}
 
 tramoRuloEnElAire :: Float -> Tramo
@@ -342,15 +342,20 @@ sumarDesgasteRuedas numero1 numero2 numero3 unAuto = actualizarDesgasteRuedas (+
 sumarTiempoDeCarrera :: Float -> Float -> Float -> Float -> Auto -> Auto
 sumarTiempoDeCarrera numero1 numero2 numero3 numero4 unAuto = actualizarTiempoDeCarrera (+ calcularTiempoAgregado numero1 numero2 numero3 numero4) unAuto
 
+
+{-
 desgasteDeChasisIgual :: Float -> Auto -> Auto
 desgasteDeChasisIgual unNumero unAuto = unAuto{ desgaste = (ruedas unAuto, unNumero) }
-
+-}
 
 calcularDesgaste :: Float -> Float -> Float -> Float
-calcularDesgaste numero1 numero2 numero3 =   numero1 * numero2 / numero3
+calcularDesgaste numero1 numero2 numero3 =  multiplicarAPorBYDividirPorC numero1 numero2 numero3
 
 calcularTiempoAgregado :: Float -> Float -> Float -> Float -> Float
-calcularTiempoAgregado numero1 numero2 numero3 numero4 =  numero1 *  numero2 / ( numero3 / numero4 )
+calcularTiempoAgregado numero1 numero2 numero3 numero4 =  multiplicarAPorBYDividirPorC numero1 numero2 ( numero3 / numero4 )
+
+multiplicarAPorBYDividirPorC :: Float -> Float -> Float -> Float
+multiplicarAPorBYDividirPorC numero1 numero2 numero3 = numero1 * numero2 / numero3
 
 -- Punto 5.a)
 
