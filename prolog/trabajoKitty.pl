@@ -56,7 +56,10 @@ tieneRepetida(Persona, Figurita):-
 
 rara(Figurita):-
     figurita(Figurita, _),
-    noEstaEnDosPrimerosPaquetes(Figurita), 
+    noEstaEnDosPrimerosPaquetes(Figurita). 
+
+rara(Figurita):-
+    figurita(Figurita, _),
     consiguioMenosDeLaMitad(Figurita), 
     noEstaRepetida(Figurita). 
 
