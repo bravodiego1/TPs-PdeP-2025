@@ -80,3 +80,37 @@ consiguioMenosDeLaMitad(Figurita):-
     findall(Persona, distinct(Persona, tieneFiguritas(Persona, Figurita)), OtraLista), 
     length(OtraLista, Cantidad), 
     Cantidad < Total / 2. 
+
+% Casos de prueba: 
+/* ¿Cuáles figuritas tiene Bobby? La 1, 3, 4, 5, 6 y 7.
+?- tieneFiguritas(bobby, Figurita).
+Figurita = [3, 5] ;
+Figurita = [7] ;
+Figurita = [1, 4, 6].
+
+¿Cuáles figuritas tiene Lala? La 1, 3, 5 y 7.
+?- tieneFiguritas(lala, Figurita). 
+Figurita = [3, 7, 1] ;
+Figurita = [5].
+
+¿Juanchi tiene figuritas? No.
+?- tieneFiguritas(juanchi, _).
+false.
+
+¿Cuáles figuritas tiene repetidas Flor? La 5.
+?- tieneRepetida(flor, Figurita).
+Figurita = 5 .
+
+¿Andy tiene figuritas repetidas? Sí.
+?- tieneRepetida(andy, _).
+true .
+
+¿La figurita 8 es rara? Sí.
+?- rara(8).
+true .
+
+¿La figurita 1 es rara? No.
+?- rara(1).
+false.
+*/
+
