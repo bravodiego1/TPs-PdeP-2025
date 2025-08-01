@@ -126,8 +126,9 @@ popularidad(myMelody,3).
 popularidad(littleTwinStars,2).
 popularidad(kuromi,5).
 
-%esValiosa(Numero):-
-%rara(Numero).
+esValiosa(Numero):-
+    figurita(Numero,_),
+    rara(Numero).
 
 esValiosa(Numero):-
     figurita(Numero,_),
@@ -151,9 +152,11 @@ nivelDeAtractivo(Numero,2):-
     length(ListaDeNumeros,Cantidad),
     Cantidad =< 2.
 
-/*esValiosa(Numero):-
-   figurita(Numero,basica(ListaDePersonajes)),
-   findall(Personaje,popularidad(Personaje,Popularidad),ListaDePersonajes),
-   findall(Popularidad,popularidad(Personaje,Popularidad),ListaDePopularidad),
-   sum_list(ListaDePopularidad,Cantidad),
-   Cantidad > 7.*/
+
+nivelDeAtractivo(Numero,Nivel):-
+    figurita(Numero,basica(ListaDePersonajes)),
+    findall(Personaje,figurita(_,basica(ListaDePersonajes)),ListaDePersonajes),
+    findall(Popularidad,popularidad(Personaje,Popularidad),ListaDePopularidad),
+    sum_list(ListaDePopularidad,Cantidad),
+    Nivel = Cantidad.
+    
