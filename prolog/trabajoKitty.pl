@@ -154,7 +154,7 @@ nivelDeAtractivo(Numero,2):-
 
 nivelDeAtractivo(Numero,Nivel):-
     figurita(Numero,basica(ListaDePersonajes)),
-    findall(Popularidad,(popularidad(Personaje,Popularidad)),ListaDePopularidad),
+    findall(Popularidad,(member(Personaje,ListaDePersonajes),popularidad(Personaje,Popularidad)),ListaDePopularidad),
     sum_list(ListaDePopularidad,Cantidad),
     Nivel = Cantidad.
     
