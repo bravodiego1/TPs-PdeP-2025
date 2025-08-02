@@ -150,7 +150,7 @@ esValiosa(Numero):-
 nivelDeAtractivo(Numero,Nivel):-
     figurita(Numero,brillante(Personaje)),
     popularidad(Personaje,Popularidad),
-    Nivel = (5 *Popularidad).
+    Nivel = (5 *Popularidad). 
 
 nivelDeAtractivo(Numero,0):-
     figurita(Numero,rompecabezas(Parte)),
@@ -168,7 +168,48 @@ nivelDeAtractivo(Numero,Nivel):-
     figurita(Numero,basica(ListaDePersonajes)),
     findall(Popularidad,(member(Personaje,ListaDePersonajes),popularidad(Personaje,Popularidad)),ListaDePopularidad),
     sum_list(ListaDePopularidad,Cantidad),
-    Nivel = Cantidad.
+    Nivel = Cantidad. 
+
+% Punto 6: 
+
+
+% Punto 7:
+
+tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales):-
+    member(Figurita, FigusRecibidas),
+    not(member(Figurita, FigusActuales)),
+    rara(Figurita).
+
+% Si hay figurita rara nueva.
+queTanInteresanteEs(Persona, FigusRecibidas, NivelFinal):-
+    figuritasJuntas(Persona, FigusActuales),
+    findall(Atractivo,(member(Figurita, FigusRecibidas), not(member(Figurita, FigusActuales)),nivelDeAtractivo(Figurita, Atractivo)),AtractivosAusentes),
+    sumlist(AtractivosAusentes, NivelBase),
+    tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales),
+    NivelFinal is NivelBase + 20.
+
+% Si no hay figurita rara nueva.
+queTanInteresanteEs(Persona, FigusRecibidas, NivelFinal):-
+    figuritasJuntas(Persona, FigusActuales),
+    findall(Atractivo,(member(Figurita, FigusRecibidas),not(member(Figurita, FigusActuales)),nivelDeAtractivo(Figurita, Atractivo)),AtractivosAusentes),
+    sumlist(AtractivosAusentes, NivelFinal),
+    not(tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales)).
+
+% Punto 8:
+
+esValidoPaquete(ListaDeFiguritas):-
+    forall(member(Figurita,ListaDeFiguritas),figurita(Figurita, _)).
+
+esValidoCanje(QuienDa, FigusQueDa, QuienRecibe, FigusQueRecibe):-
+    figuritasJuntas(QuienDa, FigusDeQuienDa),
+    figuritasJuntas(QuienRecibe, FigusDeQuienRecibe),
+    forall(member(Figurita, FigusQueDa), member(Figurita, FigusDeQuienDa)),
+    forall(member(Figurita, FigusQueRecibe), member(Figurita, FigusDeQuienRecibe)).
+
+esValido(canje(QuienDa, FigusDa, QuienRecibe, FigusRecibe)) :-
+    esValidoCanje(QuienDa, FigusDa, QuienRecibe, FigusRecibe).
+esValido(paquete(Figuritas)) :-
+    esValidoPaquete(Figuritas).
 
 /* Punto 9 */
 
