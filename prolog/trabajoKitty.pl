@@ -12,32 +12,44 @@ paquete(lala,1,[3,7,1]).
 paquete(toto,1,[1]).
 
 % canje(PersonaQueDa, PersonaQueRecibe, listaDeFiguritasRecibidas).
-canje(flor,andy,[1]).
+/* canje(flor,andy,[1]).
 canje(andy,flor,[4,7]).
 canje(bobby,flor,[2]).
 canje(flor,bobby,[1,4,6]).
 canje(lala, pablito, [1]).
 canje(pablito,lala,[5]).
 canje(toto,pablito,[2]).
-canje(pablito, toto, [6]).
+canje(pablito, toto, [6]). */
+
+% canje(PersonaQueDa, FiguritasQueDa, PersonaQueRecibe, FiguritasQueRecibe)
+canje(andy,[4,7],flor,[1]).
+canje(flor, [1,4,6],bobby, [2]).
+canje(pablito, [5],lala, [1]).
+canje(pablito,[6],toto,[2]).
 
 % Punto 1 
 
 tieneFiguritas(Persona,ListaFiguritas):-
     paquete(Persona,_,ListaFiguritas). 
-    
-    tieneFiguritas(Persona,ListaFiguritas):-
-        canje(_,Persona,ListaFiguritas).
-    
+
+tieneFiguritas(Persona,ListaFiguritas):-
+    canje(Persona,_,_,ListaFiguritas).
+
+tieneFiguritas(Persona,ListaFiguritas):-
+    canje(_,ListaFiguritas,Persona,_).
+
 % Punto 2
     
 tieneRepetida(Persona, Figurita):-
-    paquete(Persona, _, _),
-    findall(OtraFigurita, tieneFiguritas(Persona, OtraFigurita), Lista), 
-    flatten(Lista, ListaAplanada),
-    select(Figurita, ListaAplanada, Resto),
+    figuritasJuntas(Persona,Figuritas),
+    select(Figurita,Figuritas, Resto),
     member(Figurita, Resto). 
-        
+
+figuritasJuntas(Persona,Figuritas):-    
+    tieneFiguritas(Persona,_), 
+    findall(OtraFigurita, tieneFiguritas(Persona, OtraFigurita), Lista), 
+    flatten(Lista, Figuritas).
+
  %Punto 3
         
 rara(Figurita):-
@@ -112,7 +124,7 @@ figurita(5, rompecabezas(restaurante)).
 figurita(6, rompecabezas(restaurante)).
 figurita(7, rompecabezas(restaurante)).
 figurita(8, basica([kitty,cinnamoroll,badtzMaru,keroppi,pompompurin,gudetama,myMelody,littleTwinStars,kuromi])).
-
+figurita(9, brillante(badtzMaru)).
 % PUNTO 5 %
 
 %popularidad(Personaje,Popularidad).
@@ -157,4 +169,57 @@ nivelDeAtractivo(Numero,Nivel):-
     findall(Popularidad,(member(Personaje,ListaDePersonajes),popularidad(Personaje,Popularidad)),ListaDePopularidad),
     sum_list(ListaDePopularidad,Cantidad),
     Nivel = Cantidad.
-    
+
+/* Punto 9 */
+
+haceNegocio(Persona, canje(Persona,FiguritasQueDa,Otro,FiguritasQueRecibe)):-
+    canje(Persona,FiguritasQueDa,Otro,FiguritasQueRecibe),
+    tieneValiosa(FiguritasQueRecibe),
+    noTieneValiosas(FiguritasQueDa).
+
+tieneValiosa(Figuritas):-
+    member(F,Figuritas),
+    esValiosa(F).
+
+noTieneValiosas(Figuritas):-
+    not((member(F, Figuritas), esValiosa(F))).
+
+/*
+ ?- haceNegocio(pablito,canje(pablito,[5],lala,[1])).
+true.
+
+?- haceNegocio(toto,canje(toto,[2],pablito,[6])).
+false. */
+
+/* Punto 10 */
+
+necesitaConUrgencia(Persona,Figurita):-
+    leFaltaFigurita(Figurita,FiguritasQueTiene,Persona),
+    necesitaFigurita(Figurita,FiguritasQueTiene).
+
+necesitaFigurita(Figurita,FiguritasQueTiene):-
+    casiCompletoElAlbum(Figurita,FiguritasQueTiene).
+
+necesitaFigurita(Figurita,FiguritasQueTiene):-
+    casiCompletoElRompeCabezas(Figurita,FiguritasQueTiene).
+
+casiCompletoElAlbum(Figurita,FiguritasQueTiene):-
+    findall(Fig,figurita(Fig,_),TodasFiguritas),
+    forall((member(Figurin, TodasFiguritas), Figurin \= Figurita), member(Figurin,FiguritasQueTiene)).
+
+casiCompletoElRompeCabezas(Figurita, FiguritasQueTiene) :-
+    figurita(Figurita, rompecabezas(Imagen)),
+    figurita(OtraFigurita, rompecabezas(Imagen)),
+    Figurita \= OtraFigurita,
+    member(OtraFigurita, FiguritasQueTiene).
+
+leFaltaFigurita(Figurita,Figuritas,Persona):-
+    figuritasJuntas(Persona,Figuritas),
+    figurita(Figurita,_),
+    not(member(Figurita,Figuritas)).
+
+/* ?- necesitaConUrgencia(andy,9).
+true ;
+
+ ?- necesitaConUrgencia(flor,6).
+true ; */
