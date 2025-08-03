@@ -39,7 +39,7 @@ tieneFiguritas(Persona,ListaFiguritas):-
     canje(_,ListaFiguritas,Persona,_).
 tieneFiguritas(juanchi,[]).
 
-% Punto 2
+% Punto 2 %
     
 tieneRepetida(Persona, Figurita):-
     figuritasJuntas(Persona,Figuritas),
@@ -51,7 +51,7 @@ figuritasJuntas(Persona,Figuritas):-
     findall(OtraFigurita, tieneFiguritas(Persona, OtraFigurita), Lista), 
     flatten(Lista, Figuritas).
 
- %Punto 3
+% Punto 3 %
         
 rara(Figurita):-
     figurita(Figurita, _),
@@ -117,6 +117,7 @@ false.
 % figurita(Numero, basica([Personaje])).
 % figurita(Numero, brillante(Personaje)).
 % figurita(Numero, rompecabezas(ImagenQueForman)).
+
 figurita(1, basica([kitty, keroppi])).
 figurita(2, brillante(kitty)).
 figurita(3, brillante(myMelody)). 
@@ -126,6 +127,7 @@ figurita(6, rompecabezas(restaurante)).
 figurita(7, rompecabezas(restaurante)).
 figurita(8, basica([kitty,cinnamoroll,badtzMaru,keroppi,pompompurin,gudetama,myMelody,littleTwinStars,kuromi])).
 figurita(9, brillante(badtzMaru)).
+
 % PUNTO 5 %
 
 %popularidad(Personaje,Popularidad).
@@ -151,7 +153,7 @@ esValiosa(Numero):-
 nivelDeAtractivo(Numero,Nivel):-
     figurita(Numero,brillante(Personaje)),
     popularidad(Personaje,Popularidad),
-    Nivel = (5 *Popularidad). 
+    Nivel is (5 *Popularidad). 
 
 nivelDeAtractivo(Numero,0):-
     figurita(Numero,rompecabezas(Parte)),
@@ -168,13 +170,18 @@ nivelDeAtractivo(Numero,2):-
 nivelDeAtractivo(Numero,Nivel):-
     figurita(Numero,basica(ListaDePersonajes)),
     findall(Popularidad,(member(Personaje,ListaDePersonajes),popularidad(Personaje,Popularidad)),ListaDePopularidad),
-    sum_list(ListaDePopularidad,Cantidad),
-    Nivel = Cantidad. 
+    sum_list(ListaDePopularidad,Nivel).
 
-% Punto 6: 
+% Punto 6 %
 
+imagenMasAtractiva(Persona,Imagen):-
+    figuritasJuntas(Persona,ListaDeFiguritas),
+    member(Figurita,ListaDeFiguritas),
+    nivelDeAtractivo(Figurita,Nivel),
+    forall((member(OtraFigurita,ListaDeFiguritas), OtraFigurita \= Figurita),(nivelDeAtractivo(OtraFigurita,OtroNivel), OtroNivel < Nivel)),
+    figurita(Figurita,Imagen).
 
-% Punto 7:
+% Punto 7 %
 
 tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales):-
     member(Figurita, FigusRecibidas),
@@ -196,7 +203,7 @@ queTanInteresanteEs(Persona, FigusRecibidas, NivelFinal):-
     sumlist(AtractivosAusentes, NivelFinal),
     not(tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales)).
 
-% Punto 8:
+% Punto 8 %
 
 esValidoPaquete(ListaDeFiguritas):-
     forall(member(Figurita,ListaDeFiguritas),figurita(Figurita, _)).
@@ -266,7 +273,7 @@ true ;
  ?- necesitaConUrgencia(flor,6).
 true ; */
 
-% Punto 11
+% Punto 11 %
 esUnaAmenaza(Persona, Canjes) :-
     member((Persona, FigusQueDa, OtraPersona, FigusQueRecibe), Canjes),
     haceNegocio(Persona, FigusQueDa, OtraPersona, FigusQueRecibe),
@@ -284,7 +291,7 @@ saleGanando(Persona,Canjes):-
             NivelFinal>OtroNivelFinal
         )).
 
-% Punto 12
+% Punto 12 %
 canjesValidosEntre(UnaPersona,OtraPersona,FiguritaUnaPersona,FiguritaOtraPersona):-
     figuritasJuntas(UnaPersona,_),
     tieneRepetida(UnaPersona, FiguritaUnaPersona),
