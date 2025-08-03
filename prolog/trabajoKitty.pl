@@ -272,22 +272,54 @@ true ;
 true ; */
 
 % Punto 11 %
-esUnaAmenaza(Persona, Canjes) :-
-    member((Persona, FigusQueDa, OtraPersona, FigusQueRecibe), Canjes),
-    haceNegocio(Persona, FigusQueDa, OtraPersona, FigusQueRecibe),
-    saleGanando(Persona,Canjes).
-
-saleGanando(Persona,Canjes):-
+esUnaAmenaza(Persona, Canjes):-
+    tieneFiguritas(Persona,_),
     forall(
-        (
-            member((Persona, FiguritasQueDa, OtraPersona, FiguritasQueRecibe), Canjes),
-            haceNegocio(Persona, FiguritasQueDa, OtraPersona, FiguritasQueRecibe)
-        ),
-        (
+    (
+        member((Persona, FigusQueDa, OtraPersona, FigusQueRecibe), Canjes),
+        haceNegocio(Persona, FigusQueDa, OtraPersona, FigusQueRecibe)
+    ),
+    saleGanando(Persona,FigusQueDa, FigusQueRecibe)).
+
+saleGanando(Persona,FiguritasQueDa, FiguritasQueRecibe):-
             queTanInteresanteEs(Persona, FiguritasQueRecibe, NivelFinal),
             queTanInteresanteEs(Persona, FiguritasQueDa, OtroNivelFinal),
-            NivelFinal>OtroNivelFinal
-        )).
+            NivelFinal>OtroNivelFinal.
+
+/*
+	Casos de Pruebas Inventados para el Punto 11
+
+	?- esUnaAmenaza(andy, [(andy, [4], flor, [9])]).
+	true.
+
+Si se agregara la siguiente cláusula canje(andy, [4], flor, [9]). , 
+Andy hace negocio porque recibe figurita valiosa y la que da no lo es:
+	?- nivelDeAtractivo(9,Nivel).
+	Nivel = 10 .
+	?- esValiosa(9).
+	true .
+
+	?- nivelDeAtractivo(4,Nivel).
+	Nivel = 0.
+	?- esValiosa(4).
+	false.
+Y también sale ganando, porque lo que obtuvo es más interesante porque:
+	?- queTanInteresanteEs(andy,[9],N).
+	N = 30 .
+	?- queTanInteresanteEs(andy,[4],N).
+	N = 0 
+(30>0)
+
+	?- esUnaAmenaza(pablito,[(pablito,[5],lala,[1])]).
+	false.
+Pablito hace negocio pero no sale ganando porque:
+	?- queTanInteresanteEs(pablito,[5],N).
+	N = 2 .
+	?- queTanInteresanteEs(pablito,[1],N).
+	N = 0 
+(0>2 no es cierto)
+
+*/
 
 % Punto 12 %
 canjesValidosEntre(UnaPersona,OtraPersona,FiguritaUnaPersona,FiguritaOtraPersona):-
@@ -319,13 +351,43 @@ estilo(flor,descartador).
 estilo(bobby,clasico).
 
 /*
-?- canjesValidosEntre(andy,flor,FiguritaUnaPersona,FiguritaOtraPersona). 
-FiguritaUnaPersona = 1,
-FiguritaOtraPersona = 5 .
+	Casos de Pruebas Inventados para el Punto 12
 
-%con paquete(bobby,1,[3]). y paquete(bobby,2,[7]).
+Por el enunciado, se pide que en una persona se verifique que solo la tenga repetida para dar, 
+y que con la otra se verifique su estilo de coleccionismo.
 
-?- canjesValidosEntre(flor, bobby, F1, F2).
+	?- canjesValidosEntre(andy,flor,FiguritaUnaPersona,FiguritaOtraPersona). 
+	FiguritaUnaPersona = 1,
+	FiguritaOtraPersona = 5 .
+
+	?- canjesValidosEntre(flor,andy,FiguritaUnaPersona,FiguritaOtraPersona).
+	FiguritaUnaPersona = 5,
+	FiguritaOtraPersona = 1 ;
+
+Andy tiene un estilo de coleccionar descartador, es decir, 
+solo entregará figuritas que tiene repetidas. 
+La 1 la tiene repetida porque la obtuvo en el paquete 3 y se la da Flor en un canje.
+Flor también tiene un estilo de coleccionar descartador, 
+la figurita 5 la tiene repetida porque le tocó esa en el primer y segundo paquete.
+
+
+	?- canjesValidosEntre(flor, bobby, F1, F2).
+	F1 = 5,
+	F2 = 3;
 F1 = 5,
-F2 = 3
+F2 = 7 ;
+	F1 = 5,
+	F2 = 1 ;
+F1 = 5,
+F2 = 4 ;
+	F1 = 5,
+	F2 = 6 ;
+(todos los casos aparecen repetidos)
+
+Flor tiene un estilo de coleccionar descartador, es decir, 
+solo entregará figuritas que tiene repetidas, la 5 en su caso.
+Bobby tiene un estilo de coleccionar clásico, 
+sólo acepta figuritas que no tenga previamente. 
+Por ende, si consideramos que en el paquete 1 solo recibió la 3, 
+en lugar de la 3 y la 5, aceptará la 5 de Flor y le dará alguna de las suyas.
 */
