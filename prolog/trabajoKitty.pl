@@ -222,14 +222,11 @@ esValido(paquete(Figuritas)) :-
 haceNegocio(Persona, FiguritasQueDa, Otro, FiguritasQueRecibe):-
     canje(Persona,FiguritasQueDa,Otro,FiguritasQueRecibe),
     tieneValiosa(FiguritasQueRecibe),
-    noTieneValiosas(FiguritasQueDa).
+    not(tieneValiosa(FiguritasQueDa)).
 
 tieneValiosa(Figuritas):-
     member(F,Figuritas),
     esValiosa(F).
-
-noTieneValiosas(Figuritas):-
-    not((member(F, Figuritas), esValiosa(F))).
 
 /*
  ?- haceNegocio(pablito,[5],lala,[1]).
