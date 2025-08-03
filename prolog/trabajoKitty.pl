@@ -37,6 +37,7 @@ tieneFiguritas(Persona,ListaFiguritas):-
 
 tieneFiguritas(Persona,ListaFiguritas):-
     canje(_,ListaFiguritas,Persona,_).
+tieneFiguritas(juanchi,[]).
 
 % Punto 2
     
@@ -213,7 +214,7 @@ esValido(paquete(Figuritas)) :-
 
 /* Punto 9 */
 
-haceNegocio(Persona, canje(Persona,FiguritasQueDa,Otro,FiguritasQueRecibe)):-
+haceNegocio(Persona, FiguritasQueDa, Otro, FiguritasQueRecibe):-
     canje(Persona,FiguritasQueDa,Otro,FiguritasQueRecibe),
     tieneValiosa(FiguritasQueRecibe),
     noTieneValiosas(FiguritasQueDa).
@@ -226,10 +227,10 @@ noTieneValiosas(Figuritas):-
     not((member(F, Figuritas), esValiosa(F))).
 
 /*
- ?- haceNegocio(pablito,canje(pablito,[5],lala,[1])).
+ ?- haceNegocio(pablito,[5],lala,[1]).
 true.
 
-?- haceNegocio(toto,canje(toto,[2],pablito,[6])).
+?- haceNegocio(toto,[2],pablito,[6]).
 false. */
 
 /* Punto 10 */
@@ -264,3 +265,62 @@ true ;
 
  ?- necesitaConUrgencia(flor,6).
 true ; */
+
+% Punto 11
+esUnaAmenaza(Persona, Canjes) :-
+    member((Persona, FigusQueDa, OtraPersona, FigusQueRecibe), Canjes),
+    haceNegocio(Persona, FigusQueDa, OtraPersona, FigusQueRecibe),
+    saleGanando(Persona,Canjes).
+
+saleGanando(Persona,Canjes):-
+    forall(
+        (
+            member((Persona, FiguritasQueDa, OtraPersona, FiguritasQueRecibe), Canjes),
+            haceNegocio(Persona, FiguritasQueDa, OtraPersona, FiguritasQueRecibe)
+        ),
+        (
+            queTanInteresanteEs(Persona, FiguritasQueRecibe, NivelFinal),
+            queTanInteresanteEs(Persona, FiguritasQueDa, OtroNivelFinal),
+            NivelFinal>OtroNivelFinal
+        )).
+
+% Punto 12
+canjesValidosEntre(UnaPersona,OtraPersona,FiguritaUnaPersona,FiguritaOtraPersona):-
+    figuritasJuntas(UnaPersona,_),
+    tieneRepetida(UnaPersona, FiguritaUnaPersona),
+
+    figuritasJuntas(OtraPersona,OtraLista),
+    member(FiguritaOtraPersona,OtraLista),
+    estilo(OtraPersona, Estilo),
+
+    aceptaCanje(OtraPersona,Estilo,FiguritaUnaPersona,FiguritaOtraPersona).
+
+aceptaCanje(Persona,clasico,FiguritaARecibir,_):-
+    figuritasJuntas(Persona,Figuritas),
+    not(member(FiguritaARecibir,Figuritas)).
+
+aceptaCanje(Persona,descartador,_,FiguritaAEntregar):-
+    tieneRepetida(Persona, FiguritaAEntregar).
+
+aceptaCanje(_,cazafortunas,FiguritaARecibir,_):-
+    esValiosa(FiguritaARecibir).
+
+aceptaCanje(Persona,urgido,FiguritaARecibir,_):-
+    necesitaConUrgencia(Persona,FiguritaARecibir).
+
+%estilo(Persona,Estilo).
+estilo(andy,descartador).
+estilo(flor,descartador).
+estilo(bobby,clasico).
+
+/*
+?- canjesValidosEntre(andy,flor,FiguritaUnaPersona,FiguritaOtraPersona). 
+FiguritaUnaPersona = 1,
+FiguritaOtraPersona = 5 .
+
+%con paquete(bobby,1,[3]). y paquete(bobby,2,[7]).
+
+?- canjesValidosEntre(flor, bobby, F1, F2).
+F1 = 5,
+F2 = 3
+*/
