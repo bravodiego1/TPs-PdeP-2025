@@ -60,28 +60,25 @@ rara(Figurita):-
 rara(Figurita):-
     figurita(Figurita, _),
     consiguioMenosDeLaMitad(Figurita), 
-    noEstaRepetida(Figurita). 
+    not(tieneRepetida(_, Figurita)).
         
 noEstaEnDosPrimerosPaquetes(Figurita):-
     not(estaEnPaquete(1, Figurita)), 
     not(estaEnPaquete(2, Figurita)). 
     
-    estaEnPaquete(NumeroPaquete, Figurita):-
-        paquete(_,NumeroPaquete,ListaFiguritas), 
-        member(Figurita, ListaFiguritas). 
-
-        noEstaRepetida(Figurita):-
-            not(tieneRepetida(_, Figurita)). 
+estaEnPaquete(NumeroPaquete, Figurita):-
+    paquete(_,NumeroPaquete,ListaFiguritas), 
+    member(Figurita, ListaFiguritas). 
             
-            consiguioMenosDeLaMitad(Figurita):-
-                findall(OtraPersona, distinct(OtraPersona, tieneFiguritas(OtraPersona, _)), Lista), 
-                length(Lista, Total), 
-                findall(Persona, distinct(Persona, tieneFiguritas(Persona, Figurita)), OtraLista), 
-                length(OtraLista, Cantidad), 
-                Cantidad < Total / 2. 
+consiguioMenosDeLaMitad(Figurita):-
+    findall(OtraPersona, distinct(OtraPersona, tieneFiguritas(OtraPersona, _)), Lista), 
+    length(Lista, Total), 
+    findall(Persona, distinct(Persona, tieneFiguritas(Persona, Figurita)), OtraLista), 
+    length(OtraLista, Cantidad), 
+    Cantidad < Total / 2. 
             
-                % Casos de prueba: 
- /* ¿Cuáles figuritas tiene Bobby? La 1, 3, 4, 5, 6 y 7.
+% Casos de prueba: 
+/* ¿Cuáles figuritas tiene Bobby? La 1, 3, 4, 5, 6 y 7.
 ?- tieneFiguritas(bobby, Figurita).
     Figurita = [3, 5] ;
     Figurita = [7] ;
@@ -131,6 +128,7 @@ figurita(9, brillante(badtzMaru)).
 % PUNTO 5 %
 
 %popularidad(Personaje,Popularidad).
+
 popularidad(kitty,5).
 popularidad(cinnamoroll,4).
 popularidad(badtzMaru,2).
