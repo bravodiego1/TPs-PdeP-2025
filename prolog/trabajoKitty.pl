@@ -29,6 +29,20 @@ canje(pablito,[6],toto,[2]).
 
 % Punto 1 
 
+tieneFigurita(Persona, Figurita):-
+    tieneFiguritas(Persona, ListaFiguritas), 
+    member(Figurita, ListaFiguritas). 
+
+tieneFiguritas(Persona, ListaFiguritas):-
+    paquete(Persona, _, ListaFiguritas). 
+
+tieneFiguritas(Persona,ListaFiguritas):-
+    canje(Persona, _, _, ListaFiguritas).
+
+tieneFiguritas(Persona, ListaFiguritas):-
+    canje(_, ListaFiguritas, Persona, _).
+
+/* versión anterior:
 tieneFiguritas(Persona,ListaFiguritas):-
     paquete(Persona,_,ListaFiguritas). 
 
@@ -37,10 +51,20 @@ tieneFiguritas(Persona,ListaFiguritas):-
 
 tieneFiguritas(Persona,ListaFiguritas):-
     canje(_,ListaFiguritas,Persona,_).
-tieneFiguritas(juanchi,[]).
+*/ 
 
-% Punto 2 %
-    
+% Punto 2
+
+tieneRepetida(Persona, Figurita):-
+    figuritasJuntas(Persona, Figuritas),
+    select(Figurita, Figuritas, Resto),
+    member(Figurita, Resto).
+
+figuritasJuntas(Persona,Figuritas):-
+    tieneFigurita(Persona, _), 
+    findall(Figurita, tieneFigurita(Persona, Figurita), Figuritas). 
+
+/* versión anterior: 
 tieneRepetida(Persona, Figurita):-
     figuritasJuntas(Persona,Figuritas),
     select(Figurita,Figuritas, Resto),
@@ -50,9 +74,10 @@ figuritasJuntas(Persona,Figuritas):-
     tieneFiguritas(Persona,_), 
     findall(OtraFigurita, tieneFiguritas(Persona, OtraFigurita), Lista), 
     flatten(Lista, Figuritas).
+*/
 
-% Punto 3 %
-        
+% Punto 3  
+
 rara(Figurita):-
     figurita(Figurita, _),
     noEstaEnDosPrimerosPaquetes(Figurita). 
@@ -67,16 +92,31 @@ noEstaEnDosPrimerosPaquetes(Figurita):-
     not(estaEnPaquete(2, Figurita)). 
     
 estaEnPaquete(NumeroPaquete, Figurita):-
-    paquete(_,NumeroPaquete,ListaFiguritas), 
+    paquete(_, NumeroPaquete, ListaFiguritas), 
     member(Figurita, ListaFiguritas). 
-            
+
+consiguioMenosDeLaMitad(Figurita):-
+    cantidadTotalDePersonas(TotalDePersonas), 
+    cantidadDePersonasQueTienen(Figurita, CantidadQueTienenLaFigurita), 
+    CantidadQueTienenLaFigurita < TotalDePersonas / 2. 
+
+cantidadTotalDePersonas(TotalDePersonas):-
+    findall(Persona, distinct(Persona, tieneFigurita(Persona, _)), ListaPersonasTotal), 
+    length(ListaPersonasTotal, TotalDePersonas). 
+
+cantidadDePersonasQueTienen(Figurita, CantidadQueTienenLaFigurita):-
+    findall(Persona, distinct(Persona, tieneFigurita(Persona, Figurita)), PersonasQueLaTienen), 
+    length(PersonasQueLaTienen, CantidadQueTienenLaFigurita). 
+
+/* versión anterior: 
 consiguioMenosDeLaMitad(Figurita):-
     findall(OtraPersona, distinct(OtraPersona, tieneFiguritas(OtraPersona, _)), Lista), 
     length(Lista, Total), 
     findall(Persona, distinct(Persona, tieneFiguritas(Persona, Figurita)), OtraLista), 
     length(OtraLista, Cantidad), 
     Cantidad < Total / 2. 
-            
+*/  
+
 % Casos de prueba: 
 /* ¿Cuáles figuritas tiene Bobby? La 1, 3, 4, 5, 6 y 7.
 ?- tieneFiguritas(bobby, Figurita).
@@ -110,7 +150,7 @@ true .
 false.
 */
 
-% Punto 4 %
+% Punto 4
 % figurita(Numero, basica([Personaje])).
 % figurita(Numero, brillante(Personaje)).
 % figurita(Numero, rompecabezas(ImagenQueForman)).
@@ -225,8 +265,8 @@ haceNegocio(Persona, FiguritasQueDa, Otro, FiguritasQueRecibe):-
     not(tieneValiosa(FiguritasQueDa)).
 
 tieneValiosa(Figuritas):-
-    member(F,Figuritas),
-    esValiosa(F).
+    member(Figurita,Figuritas),
+    esValiosa(Figurita).
 
 /*
  ?- haceNegocio(pablito,[5],lala,[1]).
@@ -242,16 +282,10 @@ necesitaConUrgencia(Persona,Figurita):-
     necesitaFigurita(Figurita,FiguritasQueTiene).
 
 necesitaFigurita(Figurita,FiguritasQueTiene):-
-    casiCompletoElAlbum(Figurita,FiguritasQueTiene).
-
-necesitaFigurita(Figurita,FiguritasQueTiene):-
-    casiCompletoElRompeCabezas(Figurita,FiguritasQueTiene).
-
-casiCompletoElAlbum(Figurita,FiguritasQueTiene):-
     findall(Fig,figurita(Fig,_),TodasFiguritas),
     forall((member(Figurin, TodasFiguritas), Figurin \= Figurita), member(Figurin,FiguritasQueTiene)).
 
-casiCompletoElRompeCabezas(Figurita, FiguritasQueTiene) :-
+necesitaFigurita(Figurita, FiguritasQueTiene) :-
     figurita(Figurita, rompecabezas(Imagen)),
     figurita(OtraFigurita, rompecabezas(Imagen)),
     Figurita \= OtraFigurita,
@@ -268,7 +302,7 @@ true ;
  ?- necesitaConUrgencia(flor,6).
 true ; */
 
-% Punto 11 %
+% Punto 11
 esUnaAmenaza(Persona, Canjes):-
     tieneFiguritas(Persona,_),
     forall(
@@ -279,9 +313,9 @@ esUnaAmenaza(Persona, Canjes):-
     saleGanando(Persona,FigusQueDa, FigusQueRecibe)).
 
 saleGanando(Persona,FiguritasQueDa, FiguritasQueRecibe):-
-            queTanInteresanteEs(Persona, FiguritasQueRecibe, NivelFinal),
-            queTanInteresanteEs(Persona, FiguritasQueDa, OtroNivelFinal),
-            NivelFinal>OtroNivelFinal.
+    queTanInteresanteEs(Persona, FiguritasQueRecibe, NivelFinal),
+    queTanInteresanteEs(Persona, FiguritasQueDa, OtroNivelFinal),
+    NivelFinal>OtroNivelFinal.
 
 /*
 	Casos de Pruebas Inventados para el Punto 11
@@ -318,7 +352,7 @@ Pablito hace negocio pero no sale ganando porque:
 
 */
 
-% Punto 12 %
+% Punto 12
 canjesValidosEntre(UnaPersona,OtraPersona,FiguritaUnaPersona,FiguritaOtraPersona):-
     figuritasJuntas(UnaPersona,_),
     tieneRepetida(UnaPersona, FiguritaUnaPersona),
