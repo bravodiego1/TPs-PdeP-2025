@@ -193,22 +193,22 @@ nivelDeAtractivo(Numero,Nivel):-
     popularidad(Personaje,Popularidad),
     Nivel is (5 *Popularidad). 
 
-nivelDeAtractivo(Numero,0):-
+nivelDeAtractivo(Numero,NivelDeAtractivo):-
     figurita(Numero,rompecabezas(Parte)),
     findall(Numero,figurita(Numero,rompecabezas(Parte)),ListaDeNumeros),
     length(ListaDeNumeros,Cantidad),
-    Cantidad > 2.
-
-nivelDeAtractivo(Numero,2):-
-    figurita(Numero,rompecabezas(Parte)),
-    findall(Numero,figurita(Numero,rompecabezas(Parte)),ListaDeNumeros),
-    length(ListaDeNumeros,Cantidad),
-    Cantidad =< 2.
+    nivelDeAtractivoDeRompecabezasSegunCantidad(Cantidad,NivelDeAtractivo).
 
 nivelDeAtractivo(Numero,Nivel):-
     figurita(Numero,basica(ListaDePersonajes)),
     findall(Popularidad,(member(Personaje,ListaDePersonajes),popularidad(Personaje,Popularidad)),ListaDePopularidad),
     sum_list(ListaDePopularidad,Nivel).
+
+nivelDeAtractivoDeRompecabezasSegunCantidad(Cantidad,0):-
+    Cantidad>2.
+
+nivelDeAtractivoDeRompecabezasSegunCantidad(Cantidad,2):-
+    Cantidad=<2.
 
 % Punto 6 %
 
