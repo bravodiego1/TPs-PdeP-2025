@@ -27,6 +27,7 @@ canje(flor, [1,4,6],bobby, [2]).
 canje(pablito, [5],lala, [1]).
 canje(pablito,[6],toto,[2]).
 
+
 % Punto 1 
 
 tieneFigurita(Persona, Figurita):-
@@ -55,14 +56,11 @@ tieneFiguritas(Persona,ListaFiguritas):-
 
 % Punto 2
 
-tieneRepetida(Persona, Figurita):-
-    figuritasJuntas(Persona, Figuritas),
-    select(Figurita, Figuritas, Resto),
-    member(Figurita, Resto).
-
-figuritasJuntas(Persona,Figuritas):-
-    tieneFigurita(Persona, _), 
-    findall(Figurita, tieneFigurita(Persona, Figurita), Figuritas). 
+tieneRepetida(Persona,Figurita):-
+    tieneFigurita(Persona, Figurita), 
+    findall(Figurita,tieneFigurita(Persona, Figurita),ListaDeFigurita), 
+    length(ListaDeFigurita, CantidadDeFigurita),
+    CantidadDeFigurita > 1.
 
 /* versión anterior: 
 tieneRepetida(Persona, Figurita):-
@@ -218,7 +216,11 @@ imagenMasAtractiva(Persona,Imagen):-
     nivelDeAtractivo(Figurita,Nivel),
     forall((member(OtraFigurita,ListaDeFiguritas), OtraFigurita \= Figurita),(nivelDeAtractivo(OtraFigurita,OtroNivel), OtroNivel < Nivel)),
     figurita(Figurita,Imagen).
-
+    
+figuritasJuntas(Persona,Figuritas):-
+    tieneFigurita(Persona, _), 
+    findall(Figurita, tieneFigurita(Persona, Figurita), Figuritas). 
+    
 % Punto 7 %
 
 tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales):-
@@ -311,6 +313,7 @@ esUnaAmenaza(Persona, Canjes):-
         haceNegocio(Persona, FigusQueDa, OtraPersona, FigusQueRecibe)
     ),
     saleGanando(Persona,FigusQueDa, FigusQueRecibe)).
+
 
 saleGanando(Persona,FiguritasQueDa, FiguritasQueRecibe):-
     queTanInteresanteEs(Persona, FiguritasQueRecibe, NivelFinal),
