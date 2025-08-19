@@ -231,17 +231,20 @@ tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales):-
 % Si hay figurita rara nueva.
 queTanInteresanteEs(Persona, FigusRecibidas, NivelFinal):-
     figuritasJuntas(Persona, FigusActuales),
-    findall(Atractivo,(member(Figurita, FigusRecibidas), not(member(Figurita, FigusActuales)),nivelDeAtractivo(Figurita, Atractivo)),AtractivosAusentes),
-    sumlist(AtractivosAusentes, NivelBase),
+    calculoNivel(FigusRecibidas,FigusActuales,NivelBase),
     tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales),
     NivelFinal is NivelBase + 20.
 
-% Si no hay figurita rara nueva.
+ % Si no hay figurita rara nueva.
 queTanInteresanteEs(Persona, FigusRecibidas, NivelFinal):-
     figuritasJuntas(Persona, FigusActuales),
-    findall(Atractivo,(member(Figurita, FigusRecibidas),not(member(Figurita, FigusActuales)),nivelDeAtractivo(Figurita, Atractivo)),AtractivosAusentes),
-    sumlist(AtractivosAusentes, NivelFinal),
+    calculoNivel(FigusRecibidas,FigusActuales,NivelFinal),
     not(tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales)).
+
+% Calculo auxiliar.
+calculoNivel(FigusRecibidas,FigusActuales,Nivel):-
+    findall(Atractivo,(member(Figurita, FigusRecibidas),not(member(Figurita, FigusActuales)),nivelDeAtractivo(Figurita, Atractivo)),AtractivosAusentes),
+    sumlist(AtractivosAusentes, Nivel).
 
 % Punto 8 %
 
