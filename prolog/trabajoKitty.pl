@@ -11,6 +11,10 @@ paquete(bobby,2,[7]).
 paquete(lala,1,[3,7,1]).
 paquete(toto,1,[1]).
 
+paquete(steven,1,[7,4,3,8]).
+paquete(taylor,1,[5,2,9]).
+paquete(belly,1,[4,5]).
+
 % canje(PersonaQueDa, PersonaQueRecibe, listaDeFiguritasRecibidas).
 /* canje(flor,andy,[1]).
 canje(andy,flor,[4,7]).
@@ -27,6 +31,9 @@ canje(flor, [1,4,6],bobby, [2]).
 canje(pablito, [5],lala, [1]).
 canje(pablito,[6],toto,[2]).
 
+%canje(andy, [4], flor, [9]). 
+%canje(belly,[4],steven,[3,8]).
+%canje(belly,[5],taylor,[2,9]).
 
 % Punto 1 
 
@@ -163,6 +170,9 @@ figurita(7, rompecabezas(restaurante)).
 figurita(8, basica([kitty,cinnamoroll,badtzMaru,keroppi,pompompurin,gudetama,myMelody,littleTwinStars,kuromi])).
 figurita(9, brillante(badtzMaru)).
 
+figurita(10, rompecabezas(cancha)).
+figurita(11, rompecabezas(cancha)).
+
 % PUNTO 5 %
 
 %popularidad(Personaje,Popularidad).
@@ -191,8 +201,8 @@ nivelDeAtractivo(Numero,Nivel):-
     popularidad(Personaje,Popularidad),
     Nivel is (5 *Popularidad). 
 
-nivelDeAtractivo(Numero,NivelDeAtractivo):-
-    figurita(Numero,rompecabezas(Parte)),
+nivelDeAtractivo(UnNumero,NivelDeAtractivo):-
+    figurita(UnNumero,rompecabezas(Parte)),
     findall(Numero,figurita(Numero,rompecabezas(Parte)),ListaDeNumeros),
     length(ListaDeNumeros,Cantidad),
     nivelDeAtractivoDeRompecabezasSegunCantidad(Cantidad,NivelDeAtractivo).
@@ -228,22 +238,27 @@ tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales):-
     not(member(Figurita, FigusActuales)),
     rara(Figurita).
 
-% Si hay figurita rara nueva.
 queTanInteresanteEs(Persona, FigusRecibidas, NivelFinal):-
     figuritasJuntas(Persona, FigusActuales),
     calculoNivel(FigusRecibidas,FigusActuales,NivelBase),
+    plus(FigusRecibidas,FigusActuales,NivelBase,NivelFinal).
+
+% Si hay figurita rara nueva.
+plus(FigusRecibidas,FigusActuales,NivelBase,NivelFinal):-
     tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales),
     NivelFinal is NivelBase + 20.
 
- % Si no hay figurita rara nueva.
-queTanInteresanteEs(Persona, FigusRecibidas, NivelFinal):-
-    figuritasJuntas(Persona, FigusActuales),
-    calculoNivel(FigusRecibidas,FigusActuales,NivelFinal),
+% Si no hay figurita rara nueva.
+plus(FigusRecibidas,FigusActuales,NivelFinal,NivelFinal):-
     not(tieneFiguritaRaraNueva(FigusRecibidas, FigusActuales)).
 
 % Calculo auxiliar.
 calculoNivel(FigusRecibidas,FigusActuales,Nivel):-
-    findall(Atractivo,(member(Figurita, FigusRecibidas),not(member(Figurita, FigusActuales)),nivelDeAtractivo(Figurita, Atractivo)),AtractivosAusentes),
+    findall(Atractivo,
+        (member(Figurita, FigusRecibidas),
+        not(member(Figurita, FigusActuales)),
+        nivelDeAtractivo(Figurita, Atractivo)),
+        AtractivosAusentes),
     sumlist(AtractivosAusentes, Nivel).
 
 % Punto 8 %
@@ -264,8 +279,8 @@ esValido(paquete(Figuritas)) :-
 
 /* Punto 9 */
 
-haceNegocio(Persona, FiguritasQueDa, Otro, FiguritasQueRecibe):-
-    canje(Persona,FiguritasQueDa,Otro,FiguritasQueRecibe),
+haceNegocio(Persona, FiguritasQueDa, OtraPersona, FiguritasQueRecibe):-
+    canjePosible(Persona,FiguritasQueDa,OtraPersona,FiguritasQueRecibe),
     tieneValiosa(FiguritasQueRecibe),
     not(tieneValiosa(FiguritasQueDa)).
 
@@ -273,6 +288,16 @@ tieneValiosa(Figuritas):-
     member(Figurita,Figuritas),
     esValiosa(Figurita).
 
+canjePosible(Persona,FiguritasQueDa,OtraPersona,FiguritasQueRecibe):-
+    sonFiguritasQueTiene(Persona,FiguritasQueDa),
+    sonFiguritasQueTiene(OtraPersona,FiguritasQueRecibe).
+
+canjePosible(Persona,FiguritasQueDa,OtraPersona,FiguritasQueRecibe):-
+    canje(Persona,FiguritasQueDa,OtraPersona,FiguritasQueRecibe).
+
+sonFiguritasQueTiene(Persona,Figuritas):-
+    tieneFiguritas(Persona,_),
+    forall(member(Figurita,Figuritas), tieneFigurita(Persona,Figurita)).
 /*
  ?- haceNegocio(pablito,[5],lala,[1]).
 true.
@@ -310,51 +335,28 @@ true ; */
 % Punto 11
 esUnaAmenaza(Persona, Canjes):-
     tieneFiguritas(Persona,_),
+    canjesPosiblesParaUnaPersona(Persona, Canjes),
+    member((Persona, OtraFigusQueDa, OtraOtraPersona, OtraFigusQueRecibe), Canjes),
+    haceNegocio(Persona, OtraFigusQueDa, OtraOtraPersona, OtraFigusQueRecibe),
+    forall(member((Persona, FigusQueDa, _, FigusQueRecibe), Canjes), saleGanando(Persona,FigusQueDa,FigusQueRecibe)).
+
+canjesPosiblesParaUnaPersona(Persona, Canjes):-
     forall(
-    (
-        member((Persona, FigusQueDa, OtraPersona, FigusQueRecibe), Canjes),
-        haceNegocio(Persona, FigusQueDa, OtraPersona, FigusQueRecibe)
-    ),
-    saleGanando(Persona,FigusQueDa, FigusQueRecibe)).
+        member((Persona, FiguritasQueDa, OtraPersona, FiguritasQueRecibe),Canjes), 
+        canjePosible(Persona,FiguritasQueDa,OtraPersona,FiguritasQueRecibe)
+        ).
 
-
-saleGanando(Persona,FiguritasQueDa, FiguritasQueRecibe):-
+saleGanando(Persona, FiguritasQueDa, FiguritasQueRecibe):-
     queTanInteresanteEs(Persona, FiguritasQueRecibe, NivelFinal),
     queTanInteresanteEs(Persona, FiguritasQueDa, OtroNivelFinal),
     NivelFinal>OtroNivelFinal.
 
 /*
-	Casos de Pruebas Inventados para el Punto 11
-
-	?- esUnaAmenaza(andy, [(andy, [4], flor, [9])]).
-	true.
-
-Si se agregara la siguiente cláusula canje(andy, [4], flor, [9]). , 
-Andy hace negocio porque recibe figurita valiosa y la que da no lo es:
-	?- nivelDeAtractivo(9,Nivel).
-	Nivel = 10 .
-	?- esValiosa(9).
-	true .
-
-	?- nivelDeAtractivo(4,Nivel).
-	Nivel = 0.
-	?- esValiosa(4).
-	false.
-Y también sale ganando, porque lo que obtuvo es más interesante porque:
-	?- queTanInteresanteEs(andy,[9],N).
-	N = 30 .
-	?- queTanInteresanteEs(andy,[4],N).
-	N = 0 
-(30>0)
-
-	?- esUnaAmenaza(pablito,[(pablito,[5],lala,[1])]).
-	false.
-Pablito hace negocio pero no sale ganando porque:
-	?- queTanInteresanteEs(pablito,[5],N).
-	N = 2 .
-	?- queTanInteresanteEs(pablito,[1],N).
-	N = 0 
-(0>2 no es cierto)
+Caso de Prueba Inventado para el Punto 11
+    ?- esUnaAmenaza(belly,[(belly, [4], steven, [3, 8]), (belly, [5], taylor, [2, 9])]).
+    true .
+    ?- esUnaAmenaza(belly,[(belly, [4], steven, [3, 8])]).
+    true 
 
 */
 
