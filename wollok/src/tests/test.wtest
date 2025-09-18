@@ -1,5 +1,7 @@
-import main.example.pruebaTp
+import trabajoPractico.*
+describe "guitarra" {
+	test "una Fender está afinada" {
+		assert.that(guitarra.estaAfinada())
+	}
 
-test "el doble de 2 es 4" {
-	assert.equals(4, pruebaTp.doble(2))
 }
