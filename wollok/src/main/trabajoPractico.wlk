@@ -5,10 +5,10 @@
 
 object guitarra{
     const nombre = "Fender Stratocaster"
-    var color = "negro"
+    var color = "negra"
 
     method costo(){
-        if (color == "negro"){
+        if (color == "negra"){
             return 15
         } else{     
             return 10
@@ -130,6 +130,10 @@ object violin{
 
 object johann {
     var instrumento = trompeta
+
+    method instrumento(unInstrumento){
+        instrumento = unInstrumento
+    }
     
     method esFeliz() = instrumento.costo() > 20
     
@@ -141,7 +145,6 @@ object johann {
 object wolfgang {
     
     method esFeliz() = johann.esFeliz()
-
 
 }
 
