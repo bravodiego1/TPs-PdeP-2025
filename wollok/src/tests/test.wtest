@@ -19,6 +19,7 @@ describe "guitarra" {
 	}
 
 }
+
 describe "trompeta"{
 	test "Una trompeta Júpiter a una temperatura ambiente de 20 grados está afinada"{
 		trompeta.temperaturaAmbiente(20)
@@ -63,28 +64,33 @@ describe "trompeta"{
 
 describe "piano"{
 	test "El piano en una habitación de 5x5 está afinado" {
-		piano.tamanioHabitacion(25)
+		piano.anchoHabitacion(5)
+		piano.largoHabitacion(5)
 		assert.that(piano.estaAfinada())
 	}
 	
 	test "El piano en una habitación chica (de 20 metros cuadrados) no está afinado" {
-		piano.tamanioHabitacion(20) 
-		assert.that(!piano.estaAfinada())
+		piano.anchoHabitacion(4)
+		piano.largoHabitacion(5) 
+		assert.notThat(piano.estaAfinada())
 	}
 
 	test "El costo del piano en la habitación de 5x5 es de 10" {
-		piano.tamanioHabitacion(25)
+		piano.anchoHabitacion(5)
+		piano.largoHabitacion(5)
 		assert.equals(10,piano.costo())
 	}
 
 	test "El piano es valioso en la habitación inicial de 5x5" {
-		piano.tamanioHabitacion(25)
+		piano.anchoHabitacion(5)
+		piano.largoHabitacion(5)
 		assert.that(piano.esValiosa())
 	}
 	
 	test "El piano movido a una habitación chica (de 20 metros cuadrados) no es valiosa"{
-		piano.tamanioHabitacion(20)
-		assert.that(!piano.esValiosa())
+		piano.anchoHabitacion(4)
+		piano.largoHabitacion(5) 
+		assert.notThat(piano.esValiosa())
 	}
 }
 
@@ -102,7 +108,7 @@ describe "violin"{
 	test "El violín luego de 10 trémolos exactos, queda desafinado" {
 		violin.cantidadTremolos(10)
 		//assert.that(!violin.estaAfinada())
-}
+	}
 
 	test "El violín tiene un costo inicial de 20 chelines (sin trémolos)" {
 		violin.cantidadTremolos(0)
@@ -146,5 +152,26 @@ describe "wolfgang"{
 		johann.instrumento(trompeta)
 		assert.that(wolfgang.esFeliz())
 	}
+	test "Wolfgang no es feliz si Johann tiene un violín Stagg (sin trémolos)"{
+		johann.instrumento(violin)
+		violin.cantidadTremolos(0)
+		assert.notThat(wolfgang.esFeliz())
+	}
 }
+
+describe "giuseppe"{
+	test "Giuseppe es feliz con una guitarra Fender (que está siempre afinada)"{
+		giuseppe.instrumento(guitarra)
+		assert.that(giuseppe.esFeliz())
+	}
+
+	test "Giuseppe no es feliz con un piano Bechstein en una habitación de un metro cuadrado"{
+		giuseppe.instrumento(piano)
+		piano.anchoHabitacion(1)
+		piano.largoHabitacion(1)
+		assert.notThat(giuseppe.esFeliz())
+	}
+}
+
+
 

@@ -75,16 +75,22 @@ object trompeta {
 
 object piano{
     const nombre = "Bechstein"
-    var tamanioHabitacion = 25
-    // var ultimaFechaDeRevision = 
+    var anchoHabitacion = 5
+    var largoHabitacion = 5
+    // var ultimaFechaDeRevision =
+    method tamanioHabitacion()= anchoHabitacion * largoHabitacion 
 
-    method estaAfinada() = tamanioHabitacion > 20
+    method estaAfinada() = self.tamanioHabitacion() > 20
     
-    method tamanioHabitacion(unTamanio) {
-        tamanioHabitacion =  unTamanio
+    method anchoHabitacion(unTamanio) {
+        anchoHabitacion =  unTamanio
+    }
+
+    method largoHabitacion(unTamanio) {
+        largoHabitacion =  unTamanio
     }
     
-    method costo() = 2 * tamanioHabitacion
+    method costo() = 2 * anchoHabitacion
     
     method esValiosa() = self.estaAfinada()
 }
@@ -96,7 +102,7 @@ object piano{
 
 object violin{
     const nombre="stagg"
-    var property cantidadTremolos=0
+    var cantidadTremolos=0
     var afinado = true
     var property pinturaLaqueado = " "
 
@@ -161,6 +167,10 @@ object antonio {
 
 object giuseppe {
   var instrumento = guitarra
+
+  method instrumento (unInstrumento){
+    instrumento = unInstrumento
+  }
 
   method esFeliz() = instrumento.estaAfinada()
 
