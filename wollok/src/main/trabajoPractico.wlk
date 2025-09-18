@@ -42,11 +42,19 @@ object trompeta {
             self.soplar(unaAfinacion)
         }
     }
-    
+
     method estaAfinada() = temperaturaAmbiente.between(20,25)
-  
+
     method soplar(unaAfinacion) {
         temperaturaAmbiente += unaAfinacion
+    }
+
+    method temperaturaAmbiente(unaTemperatura) {
+        temperaturaAmbiente = unaTemperatura
+    }
+
+    method tieneSordina (valor) {
+        tieneSordina = valor
     }
 
     method costo() {
@@ -56,9 +64,8 @@ object trompeta {
             return 30
         }
     }
-    
+
     method esValiosa() = false
-    
 }
 
 // 3) El piano Bechstein, que por el momento está ubicado en una habitación de 5x5, suena afinado mientras se mantenga en una habitación

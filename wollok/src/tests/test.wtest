@@ -25,7 +25,40 @@ describe "trompeta"{
 		assert.that(trompeta.estaAfinada())
 	}
 
+	test "Una trompeta Júpiter a una temperatura ambiente de 25 grados está afinada" {
+		trompeta.temperaturaAmbiente(25)
+		assert.that(trompeta.estaAfinada())
+	}
 	
+	test "Una trompeta Júpiter a una temperatura ambiente de 19 grados no está afinada" {
+		trompeta.temperaturaAmbiente(19)
+		assert.notThat(trompeta.estaAfinada())
+	}
+	
+	test "Una trompeta Júpiter a una temperatura ambiente de 26 grados no está afinada" {
+		trompeta.temperaturaAmbiente(26)
+		assert.notThat(trompeta.estaAfinada())
+	}
+
+	test "Una trompeta Júpiter a una temperatura ambiente de 19 grados, si la afinamos, pasa a estar afinada" {
+		trompeta.temperaturaAmbiente(19)
+		trompeta.afinar(4)
+		assert.that(trompeta.estaAfinada())
+	}
+
+	test "La trompeta cuesta sin sordina 30 chelines" {
+		trompeta.tieneSordina(false)
+		assert.equals(30,trompeta.costo())
+	}
+
+	test "La trompeta cuesta con sordina 35 chelines" {
+		trompeta.tieneSordina(true)
+		assert.equals(35,trompeta.costo())
+	}
+
+	test "La trompeta no es valiosa" {
+		assert.notThat(trompeta.esValiosa())
+	}
 }
 
 describe "piano"{
