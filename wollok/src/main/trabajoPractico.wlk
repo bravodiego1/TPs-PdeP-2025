@@ -7,12 +7,16 @@ object guitarra{
     const nombre = "Fender Stratocaster"
     var color = "negro"
 
-    method price(){
+    method costo(){
         if (color == "negro"){
             return 15
         } else{     
             return 10
         }
+    }
+
+    method color(unColor) {
+        color = unColor
     }
 
     method estaAfinada() = true
@@ -40,12 +44,11 @@ object trompeta {
     }
     
     method estaAfinada() = temperaturaAmbiente.between(20,25)
-      
   
     method soplar(unaAfinacion) {
         temperaturaAmbiente += unaAfinacion
     }
-    
+
     method costo() {
         if (tieneSordina) {
             return 35
@@ -70,7 +73,9 @@ object piano{
 
     method estaAfinada() = tamanioHabitacion > 20
     
-    method tamanioHabitacion(unTamanio) = unTamanio
+    method tamanioHabitacion(unTamanio) {
+        tamanioHabitacion =  unTamanio
+    }
     
     method costo() = 2 * tamanioHabitacion
     
@@ -87,6 +92,10 @@ object violin{
     var property cantidadTremolos=0
     var afinado = true
     var property pinturaLaqueado = " "
+
+    method cantidadTremolos(unaCantidad){
+        cantidadTremolos = unaCantidad
+    }
 
     method estaAfinada(){
         if(cantidadTremolos>=10){

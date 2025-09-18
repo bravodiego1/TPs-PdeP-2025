@@ -1,7 +1,99 @@
-import trabajoPractico.*
+import main.trabajoPractico.*
+
 describe "guitarra" {
 	test "una Fender está afinada" {
 		assert.that(guitarra.estaAfinada())
 	}
+	test "el costo de una Fender negra es 15" {
+		guitarra.color("negra")
+		assert.equals(15,guitarra.costo())
+	}
+	
+	test "el costo de una Fender roja es 10" {
+		guitarra.color("rojo")
+		assert.equals(10,guitarra.costo())	
+	}
+	
+	test "una Fender es valiosa" {
+		assert.that(guitarra.esValiosa())
+	}
 
 }
+describe "trompeta"{
+	test "Una trompeta Júpiter a una temperatura ambiente de 20 grados está afinada"{
+		trompeta.temperaturaAmbiente(20)
+		assert.that(trompeta.estaAfinada())
+	}
+
+	
+}
+
+describe "piano"{
+	test "El piano en una habitación de 5x5 está afinado" {
+		piano.tamanioHabitacion(25)
+		assert.that(piano.estaAfinada())
+	}
+	
+	test "El piano en una habitación chica (de 20 metros cuadrados) no está afinado" {
+		piano.tamanioHabitacion(20) 
+		assert.that(!piano.estaAfinada())
+	}
+
+	test "El costo del piano en la habitación de 5x5 es de 10" {
+		piano.tamanioHabitacion(25)
+		assert.equals(10,piano.costo())
+	}
+
+	test "El piano es valioso en la habitación inicial de 5x5" {
+		piano.tamanioHabitacion(25)
+		assert.that(piano.esValiosa())
+	}
+	
+	test "El piano movido a una habitación chica (de 20 metros cuadrados) no es valiosa"{
+		piano.tamanioHabitacion(20)
+		assert.that(!piano.esValiosa())
+	}
+}
+
+describe "violin"{
+	test "El violín Stagg comienza afinado (0 trémolos)" {
+		violin.cantidadTremolos(0)
+		assert.that(violin.estaAfinada())
+	}
+
+	test "El violín con 9 trémolos todavía está afinado"{
+		violin.cantidadTremolos(9)
+		assert.that(violin.estaAfinada())
+	}
+
+	test "El violín luego de 10 trémolos exactos, queda desafinado" {
+		violin.cantidadTremolos(10)
+		assert.that(!violin.estaAfinada())
+}
+
+	test "El violín tiene un costo inicial de 20 chelines (sin trémolos)" {
+		violin.cantidadTremolos(0)
+		assert.equals(20,violin.costo())
+	}
+
+	test "Con exactamente 2 trémolos, el violín tiene un costo de 18 chelines" {
+        violin.cantidadTremolos(2)
+        assert.equals(18, violin.costo())
+    }
+
+    test "Con 10 trémolos, el violín tiene un costo de 15 chelines (nunca baja de 15)" {
+        violin.cantidadTremolos(10)
+        assert.equals(15, violin.costo())
+    }
+
+    test "Pintado con laca acrílica, el violín es valioso" {
+        violin.pinturaLaqueado("laca acrilica")
+        assert.that(violin.esValiosa())
+    }
+
+    test "Pintado con látex satinado, el violín no es valioso" {
+        violin.pinturaLaqueado("latex satinado")
+        assert.that(!violin.esValiosa())
+    }
+}
+
