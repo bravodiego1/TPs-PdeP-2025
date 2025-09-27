@@ -101,20 +101,15 @@ object piano{
 // El violín es valioso si está pintado con laca acrílica.
 
 object violin{
-    const nombre="stagg"
+    const nombre= "stagg"
     var cantidadTremolos=0
-    var afinado = true
     var property pinturaLaqueado = " "
 
     method cantidadTremolos(unaCantidad){
         cantidadTremolos = unaCantidad
     }
 
-    method estaAfinada(){
-        if(cantidadTremolos>=10){
-            afinado=false
-        }
-    }
+    method estaAfinada() = !(cantidadTremolos >= 10)
     
     method costo(){
         return 15.max(20 - cantidadTremolos)

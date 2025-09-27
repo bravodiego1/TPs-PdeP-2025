@@ -94,20 +94,20 @@ describe "piano"{
 	}
 }
 
-describe "violin"{
+describe "violin" {
 	test "El violín Stagg comienza afinado (0 trémolos)" {
 		violin.cantidadTremolos(0)
-		//assert.that(violin.estaAfinada())
+		assert.that(violin.estaAfinada())
 	}
 
 	test "El violín con 9 trémolos todavía está afinado"{
 		violin.cantidadTremolos(9)
-		//assert.that(violin.estaAfinada())
+		assert.that(violin.estaAfinada())
 	}
 
 	test "El violín luego de 10 trémolos exactos, queda desafinado" {
 		violin.cantidadTremolos(10)
-		//assert.that(!violin.estaAfinada())
+		assert.that(!violin.estaAfinada())
 	}
 
 	test "El violín tiene un costo inicial de 20 chelines (sin trémolos)" {
