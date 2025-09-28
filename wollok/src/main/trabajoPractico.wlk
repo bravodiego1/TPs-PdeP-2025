@@ -103,10 +103,14 @@ object piano{
 object violin{
     const nombre= "stagg"
     var cantidadTremolos=0
-    var property pinturaLaqueado = " "
+    var pinturaLaqueado = " "
 
     method cantidadTremolos(unaCantidad){
         cantidadTremolos = unaCantidad
+    }
+
+    method pinturaLaqueado(unaPintura){
+        pinturaLaqueado=unaPintura
     }
 
     method estaAfinada() = !(cantidadTremolos >= 10)
