@@ -10,7 +10,8 @@ object guitarra{
     method costo(){
         if (color == "negra"){
             return 15
-        } else{     
+        } 
+        else{     
             return 10
         }
     }
@@ -77,7 +78,7 @@ object piano{
     const nombre = "Bechstein"
     var anchoHabitacion = 5
     var largoHabitacion = 5
-    // var ultimaFechaDeRevision =
+    // var ultimaRevision, va?
     method tamanioHabitacion()= anchoHabitacion * largoHabitacion 
 
     method estaAfinada() = self.tamanioHabitacion() > 20
@@ -103,12 +104,14 @@ object piano{
 object violin{
     const nombre= "stagg"
     var cantidadTremolos=0
-    var property pinturaLaqueado = " "
+    var pinturaLaqueado = " "
 
     method cantidadTremolos(unaCantidad){
         cantidadTremolos = unaCantidad
     }
-
+    method pinturaLaqueado(unaPintura){
+        pinturaLaqueado = unaPintura
+    }
     method estaAfinada() = !(cantidadTremolos >= 10)
     
     method costo(){
@@ -144,9 +147,9 @@ object johann {
 // 2) Wolfgang es feliz si Johann es feliz.
 
 object wolfgang {
-    
     method esFeliz() = johann.esFeliz()
-
+    
+  
 }
 
 // 3) Antonio es feliz si su instrumento es valioso. Inicialmente tiene un piano Bechstein.
@@ -154,7 +157,6 @@ object antonio {
   var instrumento = piano
 
   method esFeliz() = instrumento.esValiosa()
-
   }
     
 
@@ -175,17 +177,18 @@ object giuseppe {
 
 object maddalena {
     var instrumento = violin
-
+    method instrumento(unInstrumento){
+        instrumento = unInstrumento
+    }
     method esFeliz() = instrumento.tieneCostoPar()
     
 }
 
 
 object asociacionMusical {
-    var musicos = [johann,wolfgang,antonio,giuseppe,maddalena]
-    
+    var musicos = [johann,wolfgang,giuseppe,maddalena]
+
     method sonFelices() = musicos.filter({unMusico => unMusico.esFeliz()})
 }
 
-// TRABAJO TERMINADO (FALTAN TESTS (25)) 
 

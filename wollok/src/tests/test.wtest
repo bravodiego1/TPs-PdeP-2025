@@ -171,6 +171,31 @@ describe "giuseppe"{
 		piano.largoHabitacion(1)
 		assert.notThat(giuseppe.esFeliz())
 	}
+
+}
+
+describe "maddalena"{
+	test "Maddalena con el violín Stagg sin trémolos es feliz (costo 20, es par)"{
+		maddalena.instrumento(violin)
+		violin.cantidadTremolos(0)
+		assert.that(maddalena.esFeliz())
+	}
+	test "Maddalena con el violín Stagg con un trémolo no es feliz (costo 19, es impar)"{
+		maddalena.instrumento(violin)
+		violin.cantidadTremolos(1)
+		assert.notThat(maddalena.esFeliz())
+	}
+}
+
+describe "asociacionMusical"{
+	test "Si tenemos una asociación donde están Johann con un violín Stagg, Wolfgang, 
+		Giuseppe con su guitarra Fender original y Maddalena con su violín Stagg original, 
+		los músicos felices deben ser Giuseppe y Maddalena"{
+		johann.instrumento(violin)
+		giuseppe.instrumento(guitarra)
+		maddalena.instrumento(violin)
+		assert.equals([giuseppe,maddalena],asociacionMusical.sonFelices())
+	}
 }
 
 
