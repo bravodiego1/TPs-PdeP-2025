@@ -109,9 +109,7 @@ object violin{
     method cantidadTremolos(unaCantidad){
         cantidadTremolos = unaCantidad
     }
-    method pinturaLaqueado(unaPintura){
-        pinturaLaqueado = unaPintura
-    }
+
     method estaAfinada() = !(cantidadTremolos >= 10)
     
     method costo(){
