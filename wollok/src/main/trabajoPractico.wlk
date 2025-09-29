@@ -102,27 +102,25 @@ object piano{
 // El violín es valioso si está pintado con laca acrílica.
 
 object violin{
-    const nombre= "stagg"
+    const nombre = "stagg"
     var cantidadTremolos=0
-    var pinturaLaqueado = " "
+    var pinturaLaqueado = " " 
 
     method cantidadTremolos(unaCantidad){
         cantidadTremolos = unaCantidad
     }
 
+    method pinturaLaqueado(unaPintura){
+        pinturaLaqueado = unaPintura
+    }
     method estaAfinada() = !(cantidadTremolos >= 10)
     
-    method costo(){
-        return 15.max(20 - cantidadTremolos)
-    }
+    method costo() = 15.max(20 - cantidadTremolos)
 
-    method esValiosa(){
-        return pinturaLaqueado=="laca acrilica"
-    }
+    method esValiosa() = pinturaLaqueado=="laca acrilica"
 
-    method tieneCostoPar() {
-        return self.costo().even()
-    }
+    method tieneCostoPar() = self.costo().even()
+    
 }
 
 // MUSICOS (un objeto por persona pq no hay q usar clases)
