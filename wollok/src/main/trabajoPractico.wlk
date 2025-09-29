@@ -135,7 +135,9 @@ object johann {
         instrumento = unInstrumento
     }
     
-    method esFeliz() = instrumento.costo() > 20
+    method esFeliz() = self.tieneInstrumentoCaro()
+    
+    method tieneInstrumentoCaro() = instrumento.costo() > 20    
     
 }
 
@@ -144,8 +146,6 @@ object johann {
 
 object wolfgang {
     method esFeliz() = johann.esFeliz()
-    
-  
 }
 
 // 3) Antonio es feliz si su instrumento es valioso. Inicialmente tiene un piano Bechstein.
@@ -182,7 +182,7 @@ object maddalena {
 
 
 object asociacionMusical {
-    var musicos = [johann,wolfgang,giuseppe,maddalena]
+    const musicos = [johann,wolfgang,giuseppe,maddalena]
 
     method sonFelices() = musicos.filter({unMusico => unMusico.esFeliz()})
 }
