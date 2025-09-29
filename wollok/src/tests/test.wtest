@@ -194,7 +194,7 @@ describe "asociacionMusical"{
 		johann.instrumento(violin)
 		giuseppe.instrumento(guitarra)
 		maddalena.instrumento(violin)
-		assert.equals([giuseppe,maddalena],asociacionMusical.sonFelices())
+		assert.equals(#{giuseppe,maddalena},asociacionMusical.sonFelices())
 	}
 }
 

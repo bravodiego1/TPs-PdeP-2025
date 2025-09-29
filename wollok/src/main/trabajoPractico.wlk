@@ -182,7 +182,7 @@ object maddalena {
 
 
 object asociacionMusical {
-    const musicos = [johann,wolfgang,giuseppe,maddalena]
+    const musicos = #{johann,wolfgang,giuseppe,maddalena}
 
     method sonFelices() = musicos.filter({unMusico => unMusico.esFeliz()})
 }
