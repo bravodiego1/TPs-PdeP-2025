@@ -78,7 +78,7 @@ object piano{
     const nombre = "Bechstein"
     var anchoHabitacion = 5
     var largoHabitacion = 5
-    // var ultimaRevision, va?
+    var ultimaRevision = new Date()
     method tamanioHabitacion()= anchoHabitacion * largoHabitacion 
 
     method estaAfinada() = self.tamanioHabitacion() > 20
@@ -122,69 +122,3 @@ object violin{
     method tieneCostoPar() = self.costo().even()
     
 }
-
-// MUSICOS (un objeto por persona pq no hay q usar clases)
-
-// 1) Johann es feliz si tiene un instrumento caro (que cueste más de 20 chelines). 
-//Inicialmente Johann tiene una trompeta Jupiter.
-
-object johann {
-    var instrumento = trompeta
-
-    method instrumento(unInstrumento){
-        instrumento = unInstrumento
-    }
-    
-    method esFeliz() = self.tieneInstrumentoCaro()
-    
-    method tieneInstrumentoCaro() = instrumento.costo() > 20    
-    
-}
-
-
-// 2) Wolfgang es feliz si Johann es feliz.
-
-object wolfgang {
-    method esFeliz() = johann.esFeliz()
-}
-
-// 3) Antonio es feliz si su instrumento es valioso. Inicialmente tiene un piano Bechstein.
-object antonio {
-  var instrumento = piano
-
-  method esFeliz() = instrumento.esValiosa()
-  }
-    
-
-// 4) Giuseppe es feliz si su instrumento está afinado. Inicialmente tiene una guitarra Fender.
-
-object giuseppe {
-  var instrumento = guitarra
-
-  method instrumento (unInstrumento){
-    instrumento = unInstrumento
-  }
-
-  method esFeliz() = instrumento.estaAfinada()
-
-}
-
-// 5) Maddalena es feliz si su instrumento tiene un costo par. Inicialmente tiene un violín Stagg.
-
-object maddalena {
-    var instrumento = violin
-    method instrumento(unInstrumento){
-        instrumento = unInstrumento
-    }
-    method esFeliz() = instrumento.tieneCostoPar()
-    
-}
-
-
-object asociacionMusical {
-    const musicos = #{johann,wolfgang,giuseppe,maddalena}
-
-    method sonFelices() = musicos.filter({unMusico => unMusico.esFeliz()})
-}
-
-

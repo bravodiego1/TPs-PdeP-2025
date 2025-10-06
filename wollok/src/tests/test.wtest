@@ -1,4 +1,5 @@
-import main.trabajoPractico.*
+import main.instrumentos.*
+import main.musicos.*
 
 describe "guitarra" {
 	test "una Fender está afinada" {
@@ -194,7 +195,7 @@ describe "asociacionMusical"{
 		johann.instrumento(violin)
 		giuseppe.instrumento(guitarra)
 		maddalena.instrumento(violin)
-		assert.equals(#{giuseppe,maddalena},asociacionMusical.sonFelices())
+		assert.equals(#{giuseppe,maddalena},asociacionMusical.musicosFelices())
 	}
 }
 
